@@ -313,11 +313,15 @@ router.get('/history', (req: Request, res: Response) => {
 /**
  * POST /api/chat
  */
-router.post('/chat', (req: Request, res: Response) => {
-  const { question, activeAnalysisId } = req.body;
-  const activeContext = analysisHistory.find((a) => a.id === activeAnalysisId) || analysisHistory[0];
-  const answer = chatService.answerProductQuestion(question, activeContext);
-  res.json({ success: true, answer });
+router.post('/chat', async (req: Request, res: Response) => {
+  try {
+    const { question, activeAnalysisId } = req.body;
+    const activeContext = analysisHistory.find((a) => a.id === activeAnalysisId) || analysisHistory[0];
+    const answer = await chatService.answerProductQuestion(question, activeContext);
+    res.json({ success: true, answer });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Chat service error' });
+  }
 });
 
 /**
