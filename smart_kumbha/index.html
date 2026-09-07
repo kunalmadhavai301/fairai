@@ -1,0 +1,2698 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Smart Kumbh - Interactive Preview</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Itim&display=swap" rel="stylesheet">
+  <style>
+    * {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      font-family: 'Itim', cursive, sans-serif;
+    }
+
+    ::-webkit-scrollbar {
+      display: none;
+      width: 0px;
+      background: transparent;
+    }
+    * {
+      -ms-overflow-style: none;
+      scrollbar-width: none;
+    }
+
+    body {
+      background-color: #0f172a;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      min-height: 100vh;
+      color: #333;
+    }
+    .device-container {
+      width: 100%;
+      max-width: 380px;
+      height: 780px;
+      background-color: #DBE5FF;
+      border-radius: 36px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5), 0 0 0 12px #1e293b;
+      position: relative;
+      overflow: hidden;
+    }
+    .page {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: #DBE5FF;
+      display: flex;
+      flex-direction: column;
+      padding: 16px 24px 28px 24px;
+      transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      transform: translateX(100%);
+    }
+    .page.active {
+      transform: translateX(0) !important;
+    }
+    .page.left {
+      transform: translateX(-100%) !important;
+    }
+    .status-bar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 6px 4px 12px 4px;
+      z-index: 10;
+    }
+    .icon-btn {
+      background: none;
+      border: none;
+      cursor: pointer;
+      padding: 4px;
+      display: flex;
+      align-items: center;
+      transition: transform 0.1s ease;
+    }
+    .icon-btn:active {
+      transform: scale(0.9);
+    }
+    .main-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      text-align: center;
+      padding: 10px 0;
+      width: 100%;
+    }
+    .logo-container {
+      margin-top: 10px;
+      width: 160px;
+      height: 160px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .logo-container img {
+      max-width: 100%;
+      max-height: 100%;
+      object-fit: contain;
+    }
+    .title {
+      font-size: 38px;
+      font-weight: 700;
+      color: #000;
+      margin-top: 6px;
+      letter-spacing: -0.5px;
+      text-align: center;
+    }
+    .subtitle {
+      font-size: 16px;
+      font-weight: 500;
+      color: #1a1a1a;
+      margin-top: 2px;
+      text-align: center;
+    }
+    .button-group {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 14px;
+      width: 100%;
+      margin-top: 24px;
+    }
+    .btn-primary {
+      width: 160px;
+      height: 46px;
+      background-color: #1E399C;
+      color: #FBE4CB;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 6px;
+      cursor: pointer;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.15);
+      transition: transform 0.1s ease;
+    }
+    .btn-primary:active {
+      transform: scale(0.98);
+    }
+    .forgot-pass {
+      font-size: 15px;
+      font-weight: 500;
+      color: #000;
+      cursor: pointer;
+      margin-top: 4px;
+      text-decoration: none;
+      text-align: center;
+    }
+    .lang-dropdown-wrapper {
+      background-color: #99B5F6;
+      border-radius: 8px;
+      padding: 4px 12px;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-top: 20px;
+    }
+    .lang-dropdown-select {
+      background: transparent;
+      border: none;
+      font-size: 16px;
+      font-weight: 600;
+      color: #000;
+      outline: none;
+      cursor: pointer;
+    }
+    .btn-emergency {
+      width: 100%;
+      padding: 13px 0;
+      background-color: #ED2B2B;
+      color: #FFF;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin-top: 20px;
+      box-shadow: 0 2px 6px rgba(237, 43, 43, 0.3);
+      text-align: center;
+    }
+    .screen-title {
+      font-size: 34px;
+      font-weight: 700;
+      color: #000;
+      text-align: center;
+      margin-top: 10px;
+      margin-bottom: 24px;
+      width: 100%;
+    }
+    .form-group {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+      width: 100%;
+    }
+    .input-row {
+      display: flex;
+      align-items: flex-end;
+      gap: 4px;
+      width: 100%;
+    }
+    .input-label {
+      font-size: 20px;
+      font-weight: 700;
+      color: #000;
+      white-space: nowrap;
+    }
+    .sub-label {
+      font-size: 11px;
+      font-weight: 500;
+      color: #000;
+    }
+    .line-input {
+      flex: 1;
+      border: none;
+      border-bottom: 2px solid #000;
+      background: transparent;
+      outline: none;
+      font-size: 18px;
+      font-weight: 500;
+      color: #000;
+      padding-bottom: 2px;
+    }
+    .btn-cyan {
+      width: 250px;
+      height: 46px;
+      background-color: #00D4FF;
+      color: #000;
+      font-size: 19px;
+      font-weight: 700;
+      border: none;
+      border-radius: 8px;
+      cursor: pointer;
+      margin: 36px auto 0 auto;
+      display: block;
+      box-shadow: 0 2px 4px rgba(0,212,255,0.3);
+      transition: transform 0.1s ease;
+      text-align: center;
+    }
+    .btn-cyan:active {
+      transform: scale(0.98);
+    }
+    .btn-blue {
+      width: 100%;
+      height: 44px;
+      background-color: #6E8EF5;
+      color: #000;
+      font-size: 22px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin-top: 14px;
+      transition: transform 0.1s ease;
+      text-align: center;
+    }
+    .btn-blue:active {
+      transform: scale(0.98);
+    }
+    .btn-soft-purple {
+      width: 240px;
+      height: 44px;
+      background-color: #8CA4F4;
+      color: #000;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      margin: 0 auto;
+      display: block;
+      transition: transform 0.1s ease;
+      text-align: center;
+    }
+    .btn-soft-purple:active {
+      transform: scale(0.98);
+    }
+    .btn-dark-navy {
+      background-color: #142B6A;
+      color: white;
+      border: none;
+      border-radius: 18px;
+      padding: 8px 20px;
+      font-size: 15px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-dark-navy:active {
+      transform: scale(0.96);
+    }
+    .btn-ai-search {
+      width: 100%;
+      height: 44px;
+      background-color: #5A7BE0;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      margin-top: 20px;
+    }
+    .btn-alert-volunteers {
+      width: 100%;
+      height: 46px;
+      background-color: #FF1E56;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+      margin-top: 24px;
+    }
+    .density-pill {
+      width: 230px;
+      height: 38px;
+      background-color: #7595E5;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      font-size: 18px;
+      font-weight: 700;
+      color: #000;
+      margin-bottom: 10px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    }
+    .btn-filter {
+      width: 170px;
+      height: 40px;
+      color: white;
+      font-size: 20px;
+      font-weight: 700;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      margin-bottom: 12px;
+      transition: transform 0.1s ease;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .btn-filter:active {
+      transform: scale(0.96);
+    }
+    .user-card {
+      background-color: #B8C5E6;
+      border-radius: 6px;
+      padding: 14px;
+      margin-bottom: 16px;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.08);
+      text-align: left;
+    }
+    .card-title {
+      font-size: 18px;
+      font-weight: 700;
+      color: #000;
+    }
+    .card-subtitle {
+      font-size: 15px;
+      font-weight: 500;
+      color: #222;
+      margin-top: 2px;
+      margin-bottom: 10px;
+    }
+    .card-buttons {
+      display: flex;
+      gap: 14px;
+    }
+    .btn-pill-red {
+      background-color: #ED2B2B;
+      color: white;
+      border: none;
+      border-radius: 16px;
+      padding: 6px 18px;
+      font-size: 16px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .map-box {
+      border: 1.5px dashed #333;
+      border-radius: 4px;
+      padding: 18px 12px;
+      text-align: center;
+      font-size: 13px;
+      font-weight: 600;
+      color: #333;
+      margin-top: 20px;
+    }
+    .bullet-option {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      margin-left: 20px;
+      margin-bottom: 26px;
+      cursor: pointer;
+    }
+    .bullet-text {
+      font-size: 26px;
+      font-weight: 700;
+      color: #000;
+    }
+    .toast {
+      position: absolute;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: rgba(0,0,0,0.85);
+      color: white;
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 14px;
+      opacity: 0;
+      transition: opacity 0.3s ease;
+      pointer-events: none;
+      white-space: nowrap;
+      z-index: 100;
+    }
+    .toast.show {
+      opacity: 1;
+    }
+    .dashed-hr {
+      border: none;
+      border-top: 1.5px dashed #333;
+      margin: 20px 0;
+    }
+    .menu-item-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #000;
+      padding: 4px 0;
+      cursor: pointer;
+      text-align: left;
+      width: 100%;
+    }
+    .menu-item-text:hover {
+      color: #1E399C;
+    }
+    .home-top-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background-color: #1E399C;
+      color: #FBE4CB;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 18px;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      transition: transform 0.1s ease;
+    }
+    .home-top-btn:active {
+      transform: scale(0.95);
+    }
+  </style>
+</head>
+<body>
+
+  <div class="device-container">
+    
+    <!-- 0. Dashboard Navigation Menu Page -->
+    <div id="dashboardPage" class="page active">
+      <div class="status-bar" style="padding-bottom: 0;">
+        <button class="icon-btn" onclick="showPage('welcomePage')" title="Go to Home Page">
+          <svg width="30" height="30" viewBox="0 0 24 24" fill="black">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+        </button>
+        <button class="home-top-btn" onclick="showPage('welcomePage')">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="#FBE4CB">
+            <path d="M10 20v-6h4v6h5v-8h3L12 3 2 12h3v8z"/>
+          </svg>
+          Home
+        </button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; padding-top: 8px;">
+        <div style="width: 110px; height: 110px; border-radius: 50%; background-color: #B0BACF; display: flex; align-items: center; justify-content: center; margin-bottom: 8px;">
+          <svg width="70" height="70" viewBox="0 0 24 24" fill="#7A869E">
+            <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
+          </svg>
+        </div>
+
+        <div style="font-size: 22px; font-weight: 700; color: #000; margin-bottom: 18px;" id="t_profile_info">Profile Info</div>
+
+        <div style="display: flex; flex-direction: column; align-items: flex-start; width: 100%; padding-left: 20px; gap: 4px; margin-bottom: 24px;">
+          <div class="menu-item-text" id="t_home_page_menu" onclick="showPage('welcomePage')">> Home Page</div>
+          <div class="menu-item-text" id="t_login_page_menu" onclick="showPage('loginPage')">> Login Page</div>
+          <div class="menu-item-text" id="t_my_circle_tracker_menu" onclick="showPage('trackerPage')">> My Circle Tracker</div>
+          <div class="menu-item-text" id="t_offline_maps_menu" onclick="showPage('offlineMapsPage')">> Offline Maps</div>
+          <div class="menu-item-text" id="t_live_heat_map_menu" onclick="showPage('crowdDensityPage')">> Live Heat Map</div>
+          <div class="menu-item-text" id="t_ai_lost_finder_menu" onclick="showPage('lostPersonFinderPage')">> AI Lost Finder</div>
+          <div class="menu-item-text" id="t_smart_traffic_menu" onclick="showPage('trafficControllerPage')">> Smart Traffic</div>
+          <div class="menu-item-text" id="t_language_help_menu" onclick="showPage('translatorPage')">> Language Help</div>
+          <div class="menu-item-text" id="t_live_announcement_menu" onclick="showPage('announcementsPage')">> Live Announcement</div>
+          <div class="menu-item-text" id="t_cleanliness_management_menu" onclick="showPage('cleanlinessPage')">> Cleanliness Management</div>
+          <div class="menu-item-text" id="t_disaster_management_menu" onclick="showPage('disasterPage')">> Disaster Management</div>
+          <div class="menu-item-text" id="t_smart_parking_menu" onclick="showPage('parkingGuidancePage')">> Smart Parking</div>
+          <div class="menu-item-text" id="t_bus_control_menu" onclick="showPage('busControlPage')">> Bus Control</div>
+          <div class="menu-item-text" id="t_medical_emergency_menu" onclick="showPage('emergencyMedicalPage')">> Medical Emergency</div>
+          <div class="menu-item-text" id="t_todays_event_menu" onclick="showPage('todaysEventPage')">> Today's Event</div>
+          <div class="menu-item-text" id="t_smart_puja_menu" onclick="showPage('smartPujaPage')">> Smart Puja</div>
+          <div class="menu-item-text" id="t_info_booth_menu" onclick="showPage('infoBoothsPage')">> Info Booth</div>
+          <div class="menu-item-text" id="t_hotel_management_menu" onclick="showPage('hotelManagementPage')">> Hotel Management</div>
+          <div class="menu-item-text" id="t_sos_menu" onclick="showPage('emergencyContactsPage')">> SOS</div>
+          <div class="menu-item-text" id="t_help_disk_menu" onclick="showPage('reportProblemPage')">> Help Disk</div>
+        </div>
+
+        <button class="btn-primary" style="background-color: #6E8EF5; color: #1D2947; width: 140px; height: 44px; border-radius: 8px; font-size: 22px; margin-bottom: 24px;" id="t_exit_btn" onclick="showToast('Exiting Smart Kumbh App...')">Exit</button>
+      </div>
+    </div>
+
+    <!-- 1. Welcome Page -->
+    <div id="welcomePage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('registerPage')" title="Next Page">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div class="main-content">
+        <div class="logo-container">
+          <img src="assets/images/om_logo.png" alt="Om Symbol">
+        </div>
+
+        <div>
+          <h1 class="title" id="t_app_title">Smart Kumbh</h1>
+          <p class="subtitle" id="t_app_subtitle">Your Digital Companion</p>
+        </div>
+
+        <div class="button-group">
+          <button class="btn-primary" id="t_register_btn" onclick="showPage('registerPage')">Register</button>
+          <button class="btn-primary" id="t_login_btn" onclick="showPage('loginPage')">LOGIN</button>
+          <a class="forgot-pass" id="t_forget_password" onclick="showToast('Navigating to Forget Password...')">Forget Password !?</a>
+        </div>
+
+        <div style="width: 100%; display: flex; flex-direction: column; align-items: center;">
+          <div class="lang-dropdown-wrapper">
+            <select class="lang-dropdown-select" id="languageSelect" onchange="changeLanguage(this.value)">
+              <option value="English">English</option>
+              <option value="Hindi">Hindi</option>
+              <option value="Marathi">Marathi</option>
+            </select>
+          </div>
+
+          <button class="btn-emergency" id="t_emergency_btn" onclick="showPage('emergencyContactsPage')">Emergency Contact !</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Remaining screens 2 to 21 -->
+    <div id="registerPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('loginPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <h1 class="screen-title" id="t_welcome_register">Welcome</h1>
+
+      <div class="form-group" style="flex: 1;">
+        <div class="input-row">
+          <span class="input-label" id="t_full_name">Full Name:</span>
+          <input type="text" class="line-input">
+        </div>
+        <div class="input-row">
+          <span class="input-label" id="t_email">E.Mail:</span>
+          <input type="email" class="line-input">
+        </div>
+        <div class="input-row">
+          <span class="input-label" id="t_contact_no">Contact No<span class="sub-label" id="t_personal">(Personal)</span>:</span>
+          <input type="tel" class="line-input">
+        </div>
+        <div class="input-row">
+          <span class="input-label" id="t_address">Address:</span>
+          <input type="text" class="line-input">
+        </div>
+        <div class="input-row">
+          <span class="input-label" id="t_kumbha_id">Kumbha Id:</span>
+          <input type="text" class="line-input">
+        </div>
+        <div class="input-row">
+          <span class="input-label" id="t_password">Password:</span>
+          <input type="password" class="line-input">
+        </div>
+
+        <button class="btn-cyan" id="t_click_continue_1" onclick="showPage('loginPage')">Click To Continue</button>
+      </div>
+    </div>
+
+    <!-- 3. Sign In / Login Page ("Welcome Again !") -->
+    <div id="loginPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('trackerPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <h1 class="screen-title" id="t_welcome_login" style="margin-top: 20px; margin-bottom: 40px;">Welcome Again !</h1>
+
+      <div class="form-group" style="flex: 1;">
+        <div class="input-row">
+          <span class="input-label" id="t_kumbha_id_2">Kumbha ID:</span>
+          <input type="text" class="line-input">
+        </div>
+        <div class="input-row" style="margin-top: 10px;">
+          <span class="input-label" id="t_email_2">E.Mail:</span>
+          <input type="email" class="line-input">
+        </div>
+        <div class="input-row" style="margin-top: 10px;">
+          <span class="input-label" id="t_password_2">Password:</span>
+          <input type="password" class="line-input">
+        </div>
+
+        <button class="btn-cyan" id="t_click_continue_2" style="margin-top: 50px;" onclick="showPage('trackerPage')">Click To Continue</button>
+      </div>
+    </div>
+
+    <!-- 4. My Circle Tracker Page -->
+    <div id="trackerPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('offlineMapsPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 20px;">
+        <h1 style="font-size: 34px; font-weight: 700; color: #000;" id="t_tracker_title">My Circle Tracker</h1>
+        <h2 style="font-size: 30px; font-weight: 700; color: #000;" id="t_band_id">(WB12345)</h2>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div class="input-row">
+          <span class="input-label" id="t_enter_id">Enter ID:</span>
+          <input type="text" class="line-input">
+        </div>
+        <div style="font-size: 12px; font-weight: 500; color: #222; margin-top: 2px;" id="t_mention_band">(Mention Below The Band)</div>
+
+        <button class="btn-blue" id="t_add_circle" onclick="showToast('Added to Circle!')">Add To Circle</button>
+
+        <h3 style="font-size: 24px; font-weight: 700; color: #000; margin-top: 24px; margin-bottom: 12px;" id="t_connected_peoples">Connected Peoples:</h3>
+
+        <div class="user-card">
+          <div class="card-title">Neha (WB20433)</div>
+          <div class="card-subtitle"><span class="t_loc_label">Location:</span> 1.2 km away</div>
+          <div class="card-buttons">
+            <button class="btn-pill-red t_directions" onclick="showToast('Opening directions to Neha...')">Directions</button>
+            <button class="btn-pill-red t_sos_ring" onclick="showToast('Ringing SOS for Neha!')">SOS Ring</button>
+          </div>
+        </div>
+
+        <div class="user-card">
+          <div class="card-title">Sam (WC304204)</div>
+          <div class="card-subtitle"><span class="t_loc_label">Location:</span> 3.5 km away</div>
+          <div class="card-buttons">
+            <button class="btn-pill-red t_directions" onclick="showToast('Opening directions to Sam...')">Directions</button>
+            <button class="btn-pill-red t_sos_ring" onclick="showToast('Ringing SOS for Sam!')">SOS Ring</button>
+          </div>
+        </div>
+
+        <div class="map-box" id="t_map_preview">
+          [Mini Map Preview with pins for Connected Users]
+        </div>
+      </div>
+    </div>
+
+    <!-- 5. Welcome To Offline Maps Page -->
+    <div id="offlineMapsPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('crowdDensityPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 10px; margin-bottom: 20px;">
+        <h1 style="font-size: 34px; font-weight: 700; color: #000; line-height: 1.25;" id="t_offline_maps_title">Welcome To Offline<br>Maps</h1>
+      </div>
+
+      <div style="flex: 1; display: flex; align-items: center; justify-content: center;">
+        <img src="assets/images/nashik_map.png" alt="Nashik Map" style="max-width: 250px; max-height: 240px; object-fit: contain;">
+      </div>
+
+      <div style="width: 100%; display: flex; flex-direction: column; gap: 14px; margin-bottom: 20px;">
+        <button class="btn-soft-purple" id="t_find_location" onclick="showToast('Finding your location on map...')">📍 Find Your Loction</button>
+        <button class="btn-soft-purple" style="width: 160px;" id="t_go_back" onclick="showPage('trackerPage')">Go Back</button>
+      </div>
+    </div>
+
+    <!-- 6. Crowd Density Page -->
+    <div id="crowdDensityPage" class="page" style="padding-bottom: 0;">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('lostPersonFinderPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <h1 class="screen-title" style="margin-top: 10px; margin-bottom: 36px;" id="t_crowd_title">Crowd Density</h1>
+
+      <div style="flex: 1;">
+        <div class="bullet-option" onclick="showToast('Opening Live Heat Map...')">
+          <svg width="16" height="20" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+          <span class="bullet-text" id="t_live_heat_map">Live Heat Map !</span>
+        </div>
+
+        <div class="bullet-option" onclick="showToast('Viewing Real Time Crowd...')">
+          <svg width="16" height="20" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+          <span class="bullet-text" id="t_real_time_crowd">Real Time Crowd</span>
+        </div>
+
+        <div style="font-size: 22px; font-weight: 700; margin-top: 20px; margin-bottom: 8px;">a</div>
+
+        <div style="text-align: center; margin-top: 10px;">
+          <svg width="280" height="40" viewBox="0 0 280 40">
+            <path d="M 20,30 Q 80,0 140,30 T 260,10" fill="none" stroke="black" stroke-width="2.5"/>
+            <circle cx="20" cy="30" r="8" fill="black"/>
+            <circle cx="260" cy="10" r="8" fill="black"/>
+          </svg>
+          <div style="font-size: 22px; font-weight: 700; margin-top: 6px;" id="t_suggested_route">New Suggested Route</div>
+        </div>
+      </div>
+
+      <div style="width: calc(100% + 48px); margin-left: -24px; height: 110px; overflow: hidden; margin-top: auto;">
+        <img src="assets/images/crowd_silhouette.png" alt="Crowd Silhouette" style="width: 100%; height: 100%; object-fit: cover;">
+      </div>
+    </div>
+
+    <!-- 7. AI Lost Person Finder Page -->
+    <div id="lostPersonFinderPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('trafficControllerPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 16px;">
+        <h1 style="font-size: 32px; font-weight: 700; color: #000; line-height: 1.15;" id="t_lost_person_title">🧑‍🤝‍🧑 AI Lost Person<br>Finder</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="background-color: #7593E5; border-radius: 12px; padding: 14px; margin-bottom: 20px;">
+          <div style="font-size: 22px; font-weight: 700; color: #000; margin-bottom: 12px;" id="t_upload_photo">Upload a Recent Photo:</div>
+          <div style="display: flex; justify-content: space-around; margin-bottom: 10px;">
+            <button class="btn-dark-navy" id="t_take_photo" onclick="showToast('Opening Camera...')">Take Photo</button>
+            <button class="btn-dark-navy" id="t_import" onclick="showToast('Opening Gallery...')">Import</button>
+          </div>
+          <div style="text-align: center;">
+            <button class="btn-dark-navy" style="width: 130px;" id="t_preview" onclick="showToast('Previewing Photo...')">Preview</button>
+          </div>
+        </div>
+
+        <div style="font-size: 22px; font-weight: 700; color: #000; text-align: center; margin-bottom: 14px;" id="t_enter_desc">Enter Description:</div>
+
+        <div class="form-group" style="gap: 12px;">
+          <div class="input-row">
+            <span class="input-label" id="t_label_name">👤 Name:</span>
+            <input type="text" class="line-input">
+          </div>
+          <div class="input-row">
+            <span class="input-label" id="t_label_clothing">👗 Clothing:</span>
+            <input type="text" class="line-input">
+          </div>
+          <div class="input-row">
+            <span class="input-label" id="t_label_last_loc">📍 Last Seen Location:</span>
+            <span style="font-size: 17px; font-weight: 700; color: #111; cursor: pointer;" id="t_select_map" onclick="showToast('Opening Map Selector...')">[ Select on Map ]</span>
+          </div>
+          <div class="input-row">
+            <span class="input-label" id="t_label_last_time">🕒 Last Seen Time:</span>
+            <input type="text" class="line-input">
+          </div>
+        </div>
+
+        <button class="btn-ai-search" id="t_search_ai" onclick="showToast('Searching matches using AI...')">Search Using AI</button>
+
+        <div style="width: 100%; height: 1px; background-color: #777; margin: 20px 0 16px 0;"></div>
+
+        <div style="font-size: 16px; font-weight: 700; color: #000; margin-bottom: 10px;" id="t_possible_matches">Possible Matches:</div>
+
+        <div style="margin-bottom: 10px;">
+          <div style="font-size: 15px; font-weight: 600; color: #000;" id="t_match_1">👱 Match (85%) - Sector 4, Gate 3, 11:45 AM</div>
+          <div style="font-size: 14px; font-weight: 700; color: #111; margin-left: 24px; cursor: pointer;" class="t_view_details" onclick="showToast('Viewing details for Match 1')">[ View Details ]</div>
+        </div>
+
+        <div style="margin-bottom: 16px;">
+          <div style="font-size: 15px; font-weight: 600; color: #000;" id="t_match_2">👱 Match (72%) - Sector 7, Main Road, 11:30 AM</div>
+          <div style="font-size: 14px; font-weight: 700; color: #111; margin-left: 24px; cursor: pointer;" class="t_view_details" onclick="showToast('Viewing details for Match 2')">[ View Details ]</div>
+        </div>
+
+        <button class="btn-alert-volunteers" id="t_alert_volunteers" onclick="showToast('Alert sent to Kumbh Volunteers!')">Alert Volunteers</button>
+      </div>
+    </div>
+
+    <!-- 8. Smart Traffic Controller Page -->
+    <div id="trafficControllerPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('translatorPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 4px; margin-bottom: 24px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <div style="border: 1.5px solid #555; border-radius: 8px; padding: 2px 4px; font-size: 28px;">🚦</div>
+          <h1 style="font-size: 32px; font-weight: 700; color: #000; line-height: 1.15;" id="t_traffic_title">Smart Traffic<br>Controller</h1>
+        </div>
+        <div style="font-size: 22px; font-weight: 700; color: #000; text-decoration: underline; margin-top: 4px;" id="t_traffic_subtitle">(Signal 1 - MG Road)</div>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="font-size: 24px; font-weight: 700; color: #000; margin-bottom: 12px;" id="t_traffic_density_label">Traffic Density:</div>
+
+        <div style="padding-left: 14px;">
+          <div class="density-pill">🏎️ <span id="t_north_density">North: 45</span></div>
+          <div class="density-pill">🚙 <span id="t_south_density">South: 12</span></div>
+          <div class="density-pill">🚖 <span id="t_east_density">East: 33</span></div>
+          <div class="density-pill">🛵 <span id="t_west_density">West: 20</span></div>
+        </div>
+
+        <div style="background-color: #55D12A; border-radius: 10px; padding: 14px; text-align: center; margin-top: 24px;">
+          <div style="font-size: 24px; font-weight: 700; color: #000;">
+            <span id="t_current_light_label">Current Light:</span> 🟢 <span id="t_north_dir">North</span>
+          </div>
+          <div style="font-size: 24px; font-weight: 700; color: #000; margin-top: 4px;" id="t_timer_label">Timer: 25s</div>
+        </div>
+
+        <div style="background-color: #CB3250; border-radius: 10px; padding: 16px; margin-top: 24px;">
+          <div style="font-size: 18px; font-weight: 700; color: #fff; margin-bottom: 6px;" id="t_logs_label">Logs:</div>
+          <div style="font-size: 15px; font-weight: 500; color: #fff;" id="t_log_1">[11:02] North released (45 cars). me..</div>
+          <div style="font-size: 15px; font-weight: 500; color: #fff; margin-top: 4px;" id="t_log_2">[11:05] East released (33 cars). me..</div>
+          <div style="font-size: 15px; font-weight: 500; color: #fff; margin-top: 4px;" id="t_log_3">[11.30] West released (20 cars). me..</div>
+          <div style="font-size: 15px; font-weight: 500; color: #fff; margin-top: 4px;" id="t_log_4">[12.00] South released (12 cars). me..</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 9. Language Help & Translator Page -->
+    <div id="translatorPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('announcementsPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span style="font-size: 32px;">🌍</span>
+          <h1 style="font-size: 30px; font-weight: 700; color: #000; line-height: 1.15;" id="t_lang_translator_title">Language Help &<br>Translator</h1>
+        </div>
+        <div style="font-size: 18px; font-weight: 700; color: #000; text-decoration: underline; margin-top: 6px;">
+          <span id="t_select_lang_label">Select Language:</span> [ English ▼ ]_
+        </div>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="font-size: 20px; font-weight: 700; color: #000; margin-bottom: 10px;" id="t_quick_phrases">Quick Phrases:</div>
+
+        <div style="display: flex; flex-direction: column; gap: 8px; margin-bottom: 24px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700;">
+            <span>🙏 <span id="t_phrase_1">Where is the nearest toilet?</span></span>
+            <span style="background: #5A7BE0; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;" onclick="showToast('Playing audio phrase 1')">[ ▶ ]</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700;">
+            <span>🧭 <span id="t_phrase_2">How do I reach Gate 5?</span></span>
+            <span style="background: #5A7BE0; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;" onclick="showToast('Playing audio phrase 2')">[ ▶ ]</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700;">
+            <span>🚑 <span id="t_phrase_3">Please call medical help.</span></span>
+            <span style="background: #5A7BE0; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;" onclick="showToast('Playing audio phrase 3')">[ ▶ ]</span>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 16px; font-weight: 700;">
+            <span>👮 <span id="t_phrase_4">I am lost, please help me.</span></span>
+            <span style="background: #5A7BE0; color: #000; padding: 2px 6px; border-radius: 4px; font-size: 12px; cursor: pointer;" onclick="showToast('Playing audio phrase 4')">[ ▶ ]</span>
+          </div>
+        </div>
+
+        <h2 style="font-size: 28px; font-weight: 700; color: #000; text-align: center; margin-bottom: 14px;" id="t_realtime_translator">Real-Time Translator</h2>
+
+        <div style="display: flex; justify-content: center; gap: 14px; margin-bottom: 16px;">
+          <button class="btn-soft-purple" style="width: 110px; height: 38px; font-size: 16px;" id="t_speak_btn" onclick="showToast('Listening... speak now')">Speak</button>
+          <button class="btn-soft-purple" style="width: 170px; height: 38px; font-size: 16px;" id="t_autodetect_btn">Auto-Detect (Tamil)</button>
+        </div>
+
+        <div style="background-color: #FF3891; border-radius: 30px; padding: 14px 18px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px;">
+          <div style="font-size: 16px; font-weight: 700; color: #000; line-height: 1.25;" id="t_output_text_1">Output: "Please help me,<br>I am lost"</div>
+          <button style="background: #000; color: #fff; border: none; border-radius: 16px; padding: 6px 16px; font-size: 15px; font-weight: 700; cursor: pointer;" id="t_play_btn" onclick="showToast('Playing audio output...')">Play</button>
+        </div>
+
+        <h2 style="font-size: 28px; font-weight: 700; color: #000; text-align: center; margin-bottom: 12px;" id="t_voice_assistant">Voice Assistant :</h2>
+
+        <div style="text-align: center; margin-bottom: 14px;">
+          <button style="background-color: #B8FF00; color: #000; border: none; border-radius: 19px; padding: 8px 30px; font-size: 18px; font-weight: 700; cursor: pointer;" id="t_microphone_btn" onclick="showToast('Microphone active!')">Microphone</button>
+        </div>
+
+        <div style="background-color: #6E8EF5; border-radius: 10px; padding: 10px 16px; width: 240px; margin: 0 auto 12px auto; text-align: center; font-size: 17px; font-weight: 700; color: #000;" id="t_say_prompt">Say: “Where is parking?”</div>
+
+        <div style="background-color: #3E66D5; border-radius: 10px; padding: 10px 16px; width: 250px; margin: 0 auto 16px auto; text-align: center; font-size: 16px; font-weight: 700; color: #fff; line-height: 1.25;" id="t_output_text_2">Output: “Nearest parking is<br>200m ahead.”</div>
+      </div>
+    </div>
+
+    <!-- 10. Live Announcements Page -->
+    <div id="announcementsPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('cleanlinessPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="display: flex; align-items: flex-start; gap: 14px; margin-top: 6px; margin-bottom: 16px;">
+        <div style="background: white; border: 1px solid #ccc; border-radius: 6px; padding: 6px; text-align: center; width: 70px;">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="black">
+            <path d="M18 11c0-3.07-1.63-5.64-4.5-6.32V4c0-.83-.67-1.5-1.5-1.5s-1.5.67-1.5 1.5v.68C7.63 5.36 6 7.92 6 11v5l-2 2v1h16v-1l-2-2v-5zm-6 11c1.1 0 2-.9 2-2h-4c0 1.1.89 2 2 2z"/>
+          </svg>
+          <div style="font-size: 7px; font-weight: 700; color: #000; line-height: 1.0; margin-top: 2px;">LIVE<br>ANNOUNCEMENTS</div>
+        </div>
+        <h1 style="font-size: 32px; font-weight: 700; color: #000; line-height: 1.15;" id="t_live_announcement_title">Live<br>Announcement !!</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="font-size: 20px; font-weight: 700; color: #000; margin-bottom: 10px;" id="t_notification_label">Notification!</div>
+
+        <div style="background-color: #ED1C3B; border-radius: 10px; padding: 16px; color: white; margin-bottom: 24px;">
+          <div style="font-size: 20px; font-weight: 700;" id="t_urgent_alert_title">🚨 URGENT ALERT</div>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 4px;" id="t_urgent_alert_msg">Avoid XYZ Ghat – heavy crowd reported.</div>
+          <div style="font-size: 18px; font-weight: 700; margin-top: 12px;" id="t_urgent_alert_time">[ 11:45 AM ]</div>
+        </div>
+
+        <div style="background-color: #849CE5; border-radius: 10px; padding: 16px; color: black; margin-bottom: 28px;">
+          <div style="font-size: 20px; font-weight: 700; margin-bottom: 10px;" id="t_recent_alerts_title">Recent Alerts:</div>
+          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;" id="t_recent_alert_1">🔔 Procession starting in 10 mins (Sector 4) [11:30]</div>
+          <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px;" id="t_recent_alert_2">⚠️ Avoid ABC Road – too crowded [11:15]</div>
+          <div style="font-size: 16px; font-weight: 700;" id="t_recent_alert_3">🚨 Child lost, Info Booth #5 [11:05]</div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <button class="btn-filter" style="background-color: #E51642;" id="t_filters_btn">Filters:</button>
+          <button class="btn-filter" style="background-color: #E87A8E;" id="t_safety_btn">Safety</button>
+          <button class="btn-filter" style="background-color: #E87A8E;" id="t_info_btn">Info</button>
+          <button class="btn-filter" style="background-color: #E87A8E;" id="t_events_btn">Events</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 11. Cleanliness & Waste Management Page -->
+    <div id="cleanlinessPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('disasterPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 24px;">
+        <h1 style="font-size: 32px; font-weight: 700; color: #000; line-height: 1.15;" id="t_cleanliness_title">Cleanliness & Waste<br>Management</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="font-size: 22px; font-weight: 700; color: #000; margin-bottom: 12px;" id="t_nearby_services">Nearby Services:</div>
+
+        <div style="display: flex; flex-direction: column; gap: 10px; margin-bottom: 28px;">
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 700;">
+            <span>🚮 <span id="t_service_dustbin">Dustbin – 120m away</span></span>
+            <button class="btn-soft-purple t_navigate_btn" style="width: 100px; height: 34px; font-size: 16px; margin: 0;" onclick="showToast('Navigating to Dustbin...')">Navigate</button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 700;">
+            <span>🚻 <span id="t_service_toilet">Toilet – 300m away</span></span>
+            <button class="btn-soft-purple t_navigate_btn" style="width: 100px; height: 34px; font-size: 16px; margin: 0;" onclick="showToast('Navigating to Toilet...')">Navigate</button>
+          </div>
+          <div style="display: flex; align-items: center; justify-content: space-between; font-size: 17px; font-weight: 700;">
+            <span>🧹 <span id="t_service_cleaning">Cleaning Booth – 50m</span></span>
+            <button class="btn-soft-purple t_navigate_btn" style="width: 100px; height: 34px; font-size: 16px; margin: 0;" onclick="showToast('Navigating to Cleaning Booth...')">Navigate</button>
+          </div>
+        </div>
+
+        <button class="btn-alert-volunteers" style="background-color: #D31C3C; height: 44px; margin-top: 0; margin-bottom: 14px;" id="t_report_cleaning" onclick="showToast('Reporting area cleaning needed...')">! Report Area Needs Cleaning</button>
+
+        <div style="display: flex; gap: 16px; margin-bottom: 36px;">
+          <button class="btn-dark-navy" style="flex: 1; height: 42px; border-radius: 6px; font-size: 17px;" id="t_geo_camera" onclick="showToast('Opening Geo Camera...')">Geo Camera 📷</button>
+          <button class="btn-dark-navy" style="flex: 1; height: 42px; border-radius: 6px; font-size: 17px;" id="t_upload_btn" onclick="showToast('Uploading photo report...')">Upload</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 36px;">
+          <div style="display: flex; align-items: center; justify-content: center; gap: 6px;">
+            <span style="font-size: 28px;">♻️</span>
+            <h2 style="font-size: 26px; font-weight: 700; color: #000;" id="t_clean_tip_title">Clean Tip:</h2>
+          </div>
+          <p style="font-size: 18px; font-weight: 700; color: #222; margin-top: 6px; line-height: 1.25;" id="t_clean_tip_msg">"Please use dustbins to keep the<br>ghats clean."</p>
+        </div>
+
+        <div style="background-color: #8A9FE5; border-radius: 10px; padding: 10px 20px; display: flex; justify-content: space-around; font-size: 26px; margin-bottom: 20px;">
+          <span>🚮</span>
+          <span>🚻</span>
+          <span>🧹</span>
+          <span>🎈</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- 12. Disaster Management Page -->
+    <div id="disasterPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('parkingGuidancePage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span style="font-size: 34px;">🌍</span>
+          <h1 style="font-size: 32px; font-weight: 700; color: #000; line-height: 1.15;" id="t_disaster_title">Disaster<br>Management</h1>
+        </div>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="background-color: #C81045; border-radius: 10px; padding: 14px; color: white; margin-bottom: 16px;">
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="t_fire_emergency">🔥 Fire Emergency</div>
+          <div style="font-size: 15px; font-weight: 700;" id="t_loc_sector_12">📍 Location: Sector 12, Building A</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_status_fire">🚨 Status: Active Fire Detected</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_risk_high">👥 People at Risk: High (120+)</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_eta_fire">⏱️ Response ETA: 8 mins</div>
+        </div>
+
+        <div style="background-color: #C81045; border-radius: 10px; padding: 14px; color: white; margin-bottom: 24px;">
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 4px;" id="t_flood_alert">🌊 Flood Alert</div>
+          <div style="font-size: 15px; font-weight: 700;" id="t_loc_riverfront">📍 Location: Riverfront Zone, Gate 3</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_status_flood">🚨 Status: Rising Water Level</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_people_affected">👥 People Affected: Medium (60+)</div>
+          <div style="font-size: 15px; font-weight: 700; margin-top: 2px;" id="t_eta_flood">⏱️ Safe Zone ETA: 15 mins</div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+          <button style="background-color: #2F62E2; color: #000; border: none; border-radius: 10px; width: 290px; height: 42px; font-size: 16px; font-weight: 700; cursor: pointer;" id="t_risk_heatmap" onclick="showToast('Opening Risk Heatmap...')">📊 Risk Heatmap on Your Location</button>
+        </div>
+
+        <div style="display: flex; justify-content: space-around; margin-bottom: 24px;">
+          <div style="width: 76px; height: 76px; border-radius: 50%; background-color: #00D62E; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #000;" id="t_status_safe">Safe</div>
+          <div style="width: 76px; height: 76px; border-radius: 50%; background-color: #EAE300; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #000;" id="t_status_mod">Mod</div>
+          <div style="width: 76px; height: 76px; border-radius: 50%; background-color: #E50043; display: flex; align-items: center; justify-content: center; font-size: 18px; font-weight: 700; color: #000;" id="t_status_danger">Danger</div>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+
+        <div style="font-size: 18px; font-weight: 700; color: #000; margin-bottom: 10px;" id="t_alerts_notif_title">🔔 Alerts & Notifications</div>
+
+        <div style="display: flex; flex-direction: column; gap: 6px; margin-bottom: 20px;">
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_alert_fire_sector12">⚠️ Fire in Sector 12</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_alert_flood_riverfront">🌊 Flood near Riverfront</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_alert_leakage_sector5">💧 Major Leakage in Sector 5</div>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin-top: 10px; margin-bottom: 20px;"></div>
+      </div>
+    </div>
+
+    <!-- 13. Smart Parking Guidance Page -->
+    <div id="parkingGuidancePage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('busControlPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 24px;">
+        <h1 style="font-size: 34px; font-weight: 700; color: #000; line-height: 1.15;" id="t_parking_guidance_title">Smart Parking<br>Guidance</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="background-color: #829BE8; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 17px; font-weight: 700; color: #000;" id="t_parking_lot_a">🅿️ Parking Lot A - 1.5 km away</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000; margin-top: 4px; padding-left: 4px;" id="t_status_available">Status: ✅ Available (80/200 slots)</div>
+          <div style="text-align: center; margin-top: 12px;">
+            <button class="btn-primary t_nav_parking" style="background-color: #1E4BD8; color: #fff; width: 250px; height: 36px; border-radius: 18px; font-size: 16px;" onclick="showToast('Navigating to Parking Lot A...')">Navigate to Parking</button>
+          </div>
+        </div>
+
+        <div style="background-color: #829BE8; border-radius: 10px; padding: 14px; margin-bottom: 16px;">
+          <div style="font-size: 17px; font-weight: 700; color: #000;" id="t_parking_lot_b">🅿️ Parking Lot B - 2.3 km away</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000; margin-top: 4px; padding-left: 4px;" id="t_status_limited">Status: ⚠️ Limited (190/200 slots)</div>
+          <div style="text-align: center; margin-top: 12px;">
+            <button class="btn-primary t_nav_parking" style="background-color: #1E4BD8; color: #fff; width: 250px; height: 36px; border-radius: 18px; font-size: 16px;" onclick="showToast('Navigating to Parking Lot B...')">Navigate to Parking</button>
+          </div>
+        </div>
+
+        <div style="background-color: #829BE8; border-radius: 10px; padding: 14px; margin-bottom: 32px;">
+          <div style="font-size: 17px; font-weight: 700; color: #000;" id="t_parking_lot_c">🅿️ Parking Lot C - 3.0 km away</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000; margin-top: 4px; padding-left: 4px;" id="t_status_full">Status: ❌ Full</div>
+          <div style="text-align: center; margin-top: 12px;">
+            <button class="btn-primary" style="background-color: #1E4BD8; color: #fff; width: 250px; height: 36px; border-radius: 18px; font-size: 16px;" id="t_notify_when_available" onclick="showToast('Subscribed for Parking Lot C alerts!')">Notify When Available</button>
+          </div>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+
+        <div style="font-size: 16px; font-weight: 700; color: #000; text-align: center; margin-bottom: 12px;" id="t_route_from_to">From Parking Lot A ➔ Nearest Entry Gate #4</div>
+
+        <div style="text-align: center; margin-bottom: 14px;">
+          <button style="background-color: #1439A3; color: white; border: none; border-radius: 19px; width: 240px; height: 38px; font-size: 16px; font-weight: 700; cursor: pointer;" id="t_show_walking_route" onclick="showToast('Showing Walking Route...')">Show Walking Route</button>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin-top: 10px; margin-bottom: 20px;"></div>
+      </div>
+    </div>
+
+    <!-- 14. Bus Control Page -->
+    <div id="busControlPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('emergencyMedicalPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 20px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px;">
+          <span style="font-size: 34px;">🚌</span>
+          <h1 style="font-size: 36px; font-weight: 700; color: #000;" id="t_bus_control_title">Bus Control</h1>
+        </div>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div class="input-row" style="margin-bottom: 12px;">
+          <span class="input-label" style="font-size: 18px;" id="t_search_bus_route">🔍 Search Bus / Route:</span>
+          <input type="text" class="line-input">
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+          <button class="btn-soft-purple" style="width: 160px; height: 34px; font-size: 18px; background-color: #7595E5;" id="t_search_btn" onclick="showToast('Searching buses...')">Search</button>
+        </div>
+
+        <div style="background-color: #3B65D5; border-radius: 10px; padding: 12px; margin-bottom: 8px;">
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_live_bus_overview_1">🚏 Live Bus Overview</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_bus_101_route">[ Bus #101 – Route A ➔ Gate 3 ]</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 4px;" id="t_loc_stop_12">📍 Location: Near Stop 12 (2.3 km)</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 2px;" id="t_crowd_high">👥 Crowd Density: ⚠️ High (80%)</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 2px;" id="t_eta_gate_12">⏱️ ETA to Gate: 12 mins</div>
+        </div>
+
+        <div style="display: flex; gap: 14px; margin-bottom: 24px;">
+          <button class="btn-dark-navy t_track_live" style="flex: 1; height: 34px; border-radius: 17px; font-size: 15px;" onclick="showToast('Tracking Bus #101...')">Track Live</button>
+          <button class="btn-dark-navy t_send_alert" style="flex: 1; height: 34px; border-radius: 17px; font-size: 15px;" onclick="showToast('Alert sent for Bus #101')">Send Alert</button>
+        </div>
+
+        <div style="background-color: #3B65D5; border-radius: 10px; padding: 12px; margin-bottom: 8px;">
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_live_bus_overview_2">🚏 Live Bus Overview</div>
+          <div style="font-size: 16px; font-weight: 700; color: #000;" id="t_bus_205_route">[ Bus #205 – Route B ➔ Gate 7 ]</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 4px;" id="t_loc_stop_4">📍 Location: Near Stop 4 (1.1 km)</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 2px;" id="t_crowd_nom">👥 Crowd Density: ✅ Nom (40%)</div>
+          <div style="font-size: 15px; font-weight: 700; color: #000; margin-top: 2px;" id="t_eta_gate_7">⏱️ ETA to Gate: 7 mins</div>
+        </div>
+
+        <div style="display: flex; gap: 14px; margin-bottom: 28px;">
+          <button class="btn-dark-navy t_track_live" style="flex: 1; height: 34px; border-radius: 17px; font-size: 15px;" onclick="showToast('Tracking Bus #205...')">Track Live</button>
+          <button class="btn-dark-navy t_send_alert" style="flex: 1; height: 34px; border-radius: 17px; font-size: 15px;" onclick="showToast('Alert sent for Bus #205')">Send Alert</button>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+
+        <div style="background-color: #960032; border-radius: 10px; padding: 14px; color: white; margin-bottom: 20px;">
+          <div style="font-size: 18px; font-weight: 700; margin-bottom: 6px;" id="t_alerts_notif_title_2">🔔 Alerts & Notifications</div>
+          <div style="font-size: 16px; font-weight: 700;" id="t_bus_101_overcrowded">⚠️ Bus #101 overcrowded</div>
+          <div style="font-size: 16px; font-weight: 700; margin-top: 4px;" id="t_route_b_blocked">🚧 Route B blocked</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 15. Emergency Medical Service Page -->
+    <div id="emergencyMedicalPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('todaysEventPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 12px; margin-bottom: 28px;">
+        <h1 style="font-size: 36px; font-weight: 700; color: #000; line-height: 1.15;" id="t_emergency_medical_title">Emergency<br>Medical Service</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="display: flex; justify-content: center; margin-bottom: 14px;">
+          <button style="width: 100px; height: 100px; border-radius: 50%; background-color: #E50914; border: 4px solid #b30000; box-shadow: 0 0 15px rgba(229, 9, 20, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;" onclick="showToast('🚨 SOS ALERT DISPATCHED!')">
+            <div style="width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 26px; font-weight: 700;">SOS</div>
+          </button>
+        </div>
+
+        <div style="font-size: 17px; font-weight: 700; color: #000; text-align: center; margin-bottom: 38px;" id="t_sos_subtitle">Click If Serious Medical Emergency</div>
+
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+          <span style="font-size: 24px; width: 32px; text-align: center;">📍</span>
+          <span style="font-size: 22px; font-weight: 700; color: #000; flex: 1; margin-left: 12px; line-height: 1.15;" id="t_nearby_hospitals">Nearby Hospitals<br>& Clinics</span>
+          <button class="btn-primary t_call_btn" style="background-color: #E50914; color: white; width: 90px; height: 38px; border-radius: 19px; font-size: 17px;" onclick="showToast('Calling Nearby Hospitals (102)...')">Call</button>
+        </div>
+
+        <div style="display: flex; align-items: center; margin-bottom: 24px;">
+          <div style="width: 32px; display: flex; justify-content: center;">
+            <div style="width: 24px; height: 24px; background: white; border-radius: 3px; border: 1.5px solid #009045; display: flex; align-items: center; justify-content: center; color: #009045; font-size: 18px; font-weight: bold;">+</div>
+          </div>
+          <span style="font-size: 22px; font-weight: 700; color: #000; flex: 1; margin-left: 12px;" id="t_first_aid_team">First Aid Team</span>
+          <button class="btn-primary t_call_btn" style="background-color: #E50914; color: white; width: 90px; height: 38px; border-radius: 19px; font-size: 17px;" onclick="showToast('Calling First Aid Team...')">Call</button>
+        </div>
+
+        <div style="display: flex; align-items: center; margin-bottom: 28px;">
+          <span style="font-size: 24px; width: 32px; text-align: center;">📍</span>
+          <span style="font-size: 22px; font-weight: 700; color: #000; flex: 1; margin-left: 12px; line-height: 1.15;" id="t_call_to_ambulance">Call To<br>Amubulance</span>
+          <button class="btn-primary t_call_btn" style="background-color: #E50914; color: white; width: 90px; height: 38px; border-radius: 19px; font-size: 17px;" onclick="showToast('Calling Ambulance Helpline (108)...')">Call</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 16. Todays Event Page -->
+    <div id="todaysEventPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('smartPujaPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 24px;">
+        <h1 style="font-size: 36px; font-weight: 700; color: #000;" id="t_todays_event_title">Todays Event !</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <!-- Event 1: Morning Aarti -->
+        <div style="margin-bottom: 18px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_morning_aarti">Morning Aarti (7:30am)</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Event 2: Holy Dip Ceremony -->
+        <div style="margin-bottom: 18px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_holy_dip">Holy Dip Ceremony</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Event 3: Evening Aarti -->
+        <div style="margin-bottom: 18px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_evening_aarti">Evening Aarti (7:00pm)</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Event 4: Shahi Snan -->
+        <div style="margin-bottom: 18px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_shahi_snan">Shahi Snan (4:00am)</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Event 5: Religious Discourses -->
+        <div style="margin-bottom: 18px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_religious_discourses">Religious Discourses</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Event 6: Havan Ceremonies -->
+        <div style="margin-bottom: 32px; padding-left: 8px;">
+          <div style="display: flex; align-items: center; gap: 4px;">
+            <span style="font-size: 20px;">▶</span>
+            <span style="font-size: 24px; font-weight: 700; color: #000;" id="t_event_havan_ceremonies">Havan Ceremonies</span>
+          </div>
+          <div style="display: flex; gap: 16px; margin-top: 4px; padding-left: 28px;">
+            <button class="btn-primary t_venue_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Showing Venue...')">Venue 📍</button>
+            <button class="btn-primary t_direction_btn" style="background-color: #E5669B; color: white; width: 110px; height: 28px; border-radius: 6px; font-size: 14px;" onclick="showToast('Navigating Direction...')">Direction</button>
+          </div>
+        </div>
+
+        <!-- Click To Continue Button -->
+        <div style="text-align: center; margin-bottom: 24px;">
+          <button class="btn-primary" style="background-color: #819DF5; color: #1F2B48; width: 260px; height: 44px; border-radius: 8px; font-size: 22px;" id="t_click_continue_3" onclick="showPage('smartPujaPage')">Click To Continue</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 17. Smart Puja Page -->
+    <div id="smartPujaPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('infoBoothsPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 6px; margin-bottom: 18px;">
+        <h1 style="font-size: 34px; font-weight: 700; color: #000;" id="t_smart_puja_title">Smart Puja 🪔</h1>
+        <div style="font-size: 22px; font-weight: 700; color: #000;" id="t_book_puja_online">"Book Your Puja Online"</div>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="font-size: 20px; font-weight: 700; color: #000; text-align: center; margin-bottom: 18px;" id="t_enter_description_puja">Enter Description</div>
+
+        <div style="display: flex; flex-direction: column; gap: 12px; margin-bottom: 24px;">
+          <div class="input-row">
+            <span class="input-label" id="t_full_name_puja">👤 Full Name:</span>
+            <input type="text" class="line-input">
+          </div>
+          <div class="input-row">
+            <span class="input-label" id="t_mobile_number">📱 Mobile Number:</span>
+            <input type="tel" class="line-input">
+          </div>
+          <div class="input-row">
+            <span class="input-label" id="t_venue_puja">📍 Venue :</span>
+            <input type="text" class="line-input">
+          </div>
+          <div class="input-row" style="justify-content: space-between;">
+            <span class="input-label" id="t_choose_time">⏰ Choose Time:</span>
+            <button class="btn-soft-purple t_pick_time" style="width: 140px; height: 30px; border-radius: 15px; font-size: 15px; background-color: #6E8EF5; color: white; margin: 0;" onclick="showToast('Opening Time Picker...')">Pick Time:</button>
+          </div>
+          <div class="input-row" style="justify-content: space-between;">
+            <span class="input-label" id="t_no_of_people">👥 No. of People:</span>
+            <button class="btn-soft-purple t_select_dropdown" style="width: 140px; height: 30px; border-radius: 15px; font-size: 15px; background-color: #6E8EF5; color: white; margin: 0;" onclick="showToast('Select People Count...')">Select ▼</button>
+          </div>
+          <div class="input-row" style="justify-content: space-between;">
+            <span class="input-label" id="t_choose_date">🗓️ Choose Date:</span>
+            <button class="btn-soft-purple t_pick_date" style="width: 140px; height: 30px; border-radius: 15px; font-size: 15px; background-color: #6E8EF5; color: white; margin: 0;" onclick="showToast('Opening Date Picker...')">Pick Date:</button>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 18px;">
+          <button class="btn-primary" style="background-color: #C442C4; color: white; width: 250px; height: 38px; border-radius: 19px; font-size: 18px;" id="t_select_puja_type" onclick="showToast('Selecting Puja Type...')">🙏 Select Puja Type: ▼</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 24px;">
+          <button class="btn-primary" style="background-color: #E53966; color: white; width: 260px; height: 48px; border-radius: 10px; font-size: 26px;" id="t_confirm_booking" onclick="showToast('✅ Puja Booking Confirmed!')">Confirm Booking</button>
+        </div>
+
+        <div style="border-top: 2px dashed #000; margin: 20px 0;"></div>
+
+        <div style="text-align: center; margin-bottom: 16px;">
+          <button class="btn-primary" style="background-color: #1344D8; color: white; width: 250px; height: 38px; border-radius: 12px; font-size: 20px;" id="t_booked_puja">Booked Puja 🪔</button>
+        </div>
+
+        <div style="padding-left: 28px; margin-bottom: 20px; font-size: 16px; font-weight: 700; color: #000; line-height: 1.35;">
+          <div id="t_puja_name_val">Puja Name: Rudrabhishek</div>
+          <div id="t_date_val">Date: 20th February 2027</div>
+          <div id="t_time_val">Time: 10:30 AM</div>
+          <div id="t_venue_val">Venue: XYZ Sangham</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- 18. Info Booths Page -->
+    <div id="infoBoothsPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('hotelManagementPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 12px; margin-bottom: 36px;">
+        <h1 style="font-size: 36px; font-weight: 700; color: #000;" id="t_info_booths_title">Info Booths</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 36px;">
+          <span style="font-size: 24px;">▶</span>
+          <span style="font-size: 30px; font-weight: 700; color: #000;" id="t_head_booth">Head Booth</span>
+          <div style="width: 30px; height: 30px; background: #4B89F2; border-radius: 6px; color: white; font-size: 20px; font-weight: bold; display: flex; align-items: center; justify-content: center;">i</div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 28px;">
+          <button class="btn-primary" style="background-color: #8B9DF5; color: #1D2947; width: 270px; height: 60px; border-radius: 10px; font-size: 20px; line-height: 1.15;" id="t_click_contact_head" onclick="showToast('Contacting Head Booth...')">Click To Contact<br>Head Booth</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 50px;">
+          <button class="btn-primary" style="background-color: #7D95F2; color: #1D2947; width: 285px; height: 64px; border-radius: 10px; font-size: 20px; line-height: 1.15;" id="t_click_search_nearest" onclick="showPage('hotelManagementPage')">Click To Search<br>Nearest Booth To You!</button>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 28px;">
+          <button style="width: 105px; height: 105px; border-radius: 50%; background-color: #E50914; border: 4px solid #b30000; box-shadow: 0 0 15px rgba(229, 9, 20, 0.4); cursor: pointer; display: flex; align-items: center; justify-content: center; padding: 4px;" onclick="showToast('🚨 SOS ALERT DISPATCHED!')">
+            <div style="width: 100%; height: 100%; border-radius: 50%; border: 2.5px solid white; display: flex; align-items: center; justify-content: center; color: white; font-size: 28px; font-weight: 700;">SOS</div>
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 19. Hotel Management Page -->
+    <div id="hotelManagementPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('emergencyContactsPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="text-align: center; margin-top: 12px; margin-bottom: 38px;">
+        <h1 style="font-size: 36px; font-weight: 700; color: #000;" id="t_hotel_management_title">Hotel Management</h1>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="text-align: center; margin-bottom: 28px;">
+          <button class="btn-primary" style="background-color: #8EA9F5; color: #1D2947; width: 275px; height: 62px; border-radius: 10px; font-size: 21px; line-height: 1.15;" id="t_click_search_nearest_hotel" onclick="showToast('Searching nearest hotels...')">Click To Search<br>Nearest Hotel</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 28px;">
+          <button class="btn-primary" style="background-color: #8EA9F5; color: #1D2947; width: 275px; height: 62px; border-radius: 10px; font-size: 21px; line-height: 1.15;" id="t_click_order_food_online" onclick="showToast('Opening Online Food Ordering...')">Click To Order<br>Food Online</button>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 36px;">
+          <button class="btn-primary" style="background-color: #8EA9F5; color: #1D2947; width: 275px; height: 84px; border-radius: 10px; font-size: 20px; line-height: 1.15;" id="t_click_contact_emergency_food" onclick="showToast('Connecting to Emergency Food Service Station...')">Click To Contact<br>Emergency Food<br>Service Station</button>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 24px;">
+          <img src="assets/images/food_thinking_girl.png" alt="Food Thinking Girl" style="width: 170px; height: 170px; object-fit: contain;">
+        </div>
+      </div>
+    </div>
+
+    <!-- 20. Emergency Contacts SOS Page -->
+    <div id="emergencyContactsPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('reportProblemPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto; display: flex; flex-direction: column; align-items: center; justify-content: center;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 44px; margin-top: 10px;">
+          <svg width="84" height="84" viewBox="0 0 24 24" fill="#D30000" style="transform: rotate(-15deg);">
+            <path d="M6.62 10.79c1.44 2.83 3.76 5.14 6.59 6.59l2.2-2.2c.27-.27.67-.36 1.02-.24 1.12.37 2.33.57 3.57.57.55 0 1 .45 1 1V20c0 .55-.45 1-1 1-9.39 0-17-7.61-17-17 0-.55.45-1 1-1h3.5c.55 0 1 .45 1 1 0 1.25.2 2.45.57 3.57.11.35.03.74-.25 1.02l-2.2 2.2z"/>
+          </svg>
+          <span style="font-size: 80px; font-weight: 700; color: #D30000; line-height: 0.9;">sos</span>
+        </div>
+
+        <div style="display: flex; flex-direction: column; gap: 20px; width: 100%; align-items: center; margin-bottom: 24px;">
+          <button class="btn-primary" style="background-color: #7998F6; color: #1D2947; width: 270px; height: 54px; border-radius: 10px; font-size: 26px;" id="t_ambulace_btn" onclick="showToast('Calling Ambulance (108)...')">Ambulace 🚑</button>
+          <button class="btn-primary" style="background-color: #7998F6; color: #1D2947; width: 270px; height: 54px; border-radius: 10px; font-size: 26px;" id="t_police_btn" onclick="showToast('Calling Police Helpline (112 / 100)...')">Police 👮</button>
+          <button class="btn-primary" style="background-color: #7998F6; color: #1D2947; width: 270px; height: 54px; border-radius: 10px; font-size: 26px;" id="t_info_booths_btn" onclick="showPage('infoBoothsPage')">Info Booths</button>
+          <button class="btn-primary" style="background-color: #7998F6; color: #1D2947; width: 270px; height: 54px; border-radius: 10px; font-size: 26px;" id="t_medical_team_btn" onclick="showToast('Contacting Medical Team...')">Medical Team 🩺</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- 21. Report a Problem Page -->
+    <div id="reportProblemPage" class="page">
+      <div class="status-bar">
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="28" height="20" viewBox="0 0 28 20" fill="black">
+            <rect width="28" height="3.5" rx="1.75"/>
+            <rect y="8" width="28" height="3.5" rx="1.75"/>
+            <rect y="16" width="28" height="3.5" rx="1.75"/>
+          </svg>
+        </button>
+        <button class="icon-btn" onclick="showPage('dashboardPage')">
+          <svg width="20" height="24" viewBox="0 0 18 22" fill="black">
+            <polygon points="0,0 18,11 0,22"/>
+          </svg>
+        </button>
+      </div>
+
+      <div style="flex: 1; overflow-y: auto;">
+        <div style="display: flex; align-items: center; gap: 14px; margin-top: 8px; margin-bottom: 6px;">
+          <span style="background-color: #FF3B6B; color: white; border-radius: 8px; padding: 4px 10px; font-size: 18px; font-weight: 700;">SOS</span>
+          <h1 style="font-size: 34px; font-weight: 700; color: #000;" id="t_report_a_problem_title">Report a Problem</h1>
+        </div>
+
+        <p style="font-size: 18px; font-weight: 500; color: #000; padding-left: 8px; margin-bottom: 24px;" id="t_if_you_face_issue">If you face any issue during the Mela</p>
+
+        <!-- Section 1 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 22px;">💭</span>
+          <span style="font-size: 20px; font-weight: 700; color: #000;" id="t_chat_with_volunteers">Chat with Volunteers</span>
+        </div>
+        <div style="text-align: center; margin-bottom: 24px;">
+          <button class="btn-primary" style="background-color: #6E8EF5; color: #1D2947; width: 270px; height: 44px; border-radius: 8px; font-size: 20px;" id="t_start_chat_now" onclick="showToast('Starting Live Chat with Volunteers...')">[ Start Chat Now ]</button>
+        </div>
+
+        <hr class="dashed-hr">
+
+        <!-- Section 2 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 22px;">🗺️</span>
+          <span style="font-size: 20px; font-weight: 700; color: #000;" id="t_how_to_use_guide">How to Use This App (Guide)</span>
+        </div>
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="background-color: #6E8EF5; color: #1D2947; width: 270px; margin: 0 auto; padding: 12px 16px; border-radius: 8px; font-size: 18px; font-weight: 700; line-height: 1.2;" id="t_small_tutorial_text">Small step-by-step tutorial<br>with visuals/icons:</div>
+        </div>
+
+        <hr class="dashed-hr">
+
+        <!-- Section 3 -->
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+          <span style="font-size: 22px;">🚨</span>
+          <span style="font-size: 20px; font-weight: 700; color: #000;" id="t_report_a_problem_sec">Report a Problem</span>
+        </div>
+        <div style="text-align: center; margin-bottom: 24px;">
+          <div style="background-color: #6E8EF5; color: #1D2947; width: 270px; margin: 0 auto; padding: 12px 16px; border-radius: 8px; font-size: 18px; font-weight: 700; line-height: 1.2;" id="t_report_issues_text">“Report issues for help and<br>solutions.”</div>
+        </div>
+
+        <hr class="dashed-hr">
+
+        <!-- Section 4 -->
+        <div style="text-align: center; margin-top: 24px; margin-bottom: 16px;">
+          <h2 style="font-size: 34px; font-weight: 700; color: #000;" id="t_rating_title">Rating !</h2>
+        </div>
+
+        <div style="display: flex; justify-content: center; margin-bottom: 32px;">
+          <div style="background-color: #9832BF; border-radius: 26px; width: 260px; height: 52px; display: flex; align-items: center; justify-content: space-around; font-size: 28px;">
+            <span style="cursor: pointer;" onclick="showToast('Rated 😄')">😄</span>
+            <span style="cursor: pointer;" onclick="showToast('Rated 🙂')">🙂</span>
+            <span style="cursor: pointer;" onclick="showToast('Rated 😐')">😐</span>
+            <span style="cursor: pointer;" onclick="showToast('Rated 😟')">😟</span>
+            <span style="cursor: pointer;" onclick="showToast('Rated 😡')">😡</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div id="toast" class="toast">Action triggered</div>
+  </div>
+
+  <script>
+    const pages = ['dashboardPage', 'welcomePage', 'registerPage', 'loginPage', 'trackerPage', 'offlineMapsPage', 'crowdDensityPage', 'lostPersonFinderPage', 'trafficControllerPage', 'translatorPage', 'announcementsPage', 'cleanlinessPage', 'disasterPage', 'parkingGuidancePage', 'busControlPage', 'emergencyMedicalPage', 'todaysEventPage', 'smartPujaPage', 'infoBoothsPage', 'hotelManagementPage', 'emergencyContactsPage', 'reportProblemPage'];
+    
+    const i18n = {
+      'English': {
+        profile_info: 'Profile Info',
+        home_page_menu: '> Home Page',
+        login_page_menu: '> Login Page',
+        my_circle_tracker_menu: '> My Circle Tracker',
+        offline_maps_menu: '> Offline Maps',
+        live_heat_map_menu: '> Live Heat Map',
+        ai_lost_finder_menu: '> AI Lost Finder',
+        smart_traffic_menu: '> Smart Traffic',
+        language_help_menu: '> Language Help',
+        live_announcement_menu: '> Live Announcement',
+        cleanliness_management_menu: '> Cleanliness Management',
+        disaster_management_menu: '> Disaster Management',
+        smart_parking_menu: '> Smart Parking',
+        bus_control_menu: '> Bus Control',
+        medical_emergency_menu: '> Medical Emergency',
+        todays_event_menu: '> Today\'s Event',
+        smart_puja_menu: '> Smart Puja',
+        info_booth_menu: '> Info Booth',
+        hotel_management_menu: '> Hotel Management',
+        sos_menu: '> SOS',
+        help_disk_menu: '> Help Disk',
+        exit_btn: 'Exit',
+        app_title: 'Smart Kumbh',
+        app_subtitle: 'Your Digital Companion',
+        register_btn: 'Register',
+        login_btn: 'LOGIN',
+        forget_password: 'Forget Password !?',
+        emergency_btn: 'Emergency Contact !',
+        welcome_register: 'Welcome',
+        welcome_login: 'Welcome Again !',
+        full_name: 'Full Name:',
+        email: 'E.Mail:',
+        contact_no: 'Contact No',
+        personal: '(Personal)',
+        address: 'Address:',
+        kumbha_id: 'Kumbha Id:',
+        password: 'Password:',
+        click_to_continue: 'Click To Continue',
+        tracker_title: 'My Circle Tracker',
+        band_id: '(WB12345)',
+        enter_id: 'Enter ID:',
+        mention_band: '(Mention Below The Band)',
+        add_circle: 'Add To Circle',
+        connected_peoples: 'Connected Peoples:',
+        loc_label: 'Location:',
+        directions: 'Directions',
+        sos_ring: 'SOS Ring',
+        map_preview: '[Mini Map Preview with pins for Connected Users]',
+        offline_maps_title: 'Welcome To Offline<br>Maps',
+        find_location: '📍 Find Your Loction',
+        go_back: 'Go Back',
+        crowd_title: 'Crowd Density',
+        live_heat_map: 'Live Heat Map !',
+        real_time_crowd: 'Real Time Crowd',
+        suggested_route: 'New Suggested Route',
+        lost_person_title: '🧑‍🤝‍🧑 AI Lost Person<br>Finder',
+        upload_photo: 'Upload a Recent Photo:',
+        take_photo: 'Take Photo',
+        import: 'Import',
+        preview: 'Preview',
+        enter_desc: 'Enter Description:',
+        label_name: '👤 Name:',
+        label_clothing: '👗 Clothing:',
+        label_last_loc: '📍 Last Seen Location:',
+        select_map: '[ Select on Map ]',
+        label_last_time: '🕒 Last Seen Time:',
+        search_ai: 'Search Using AI',
+        possible_matches: 'Possible Matches:',
+        match_1: '👱 Match (85%) - Sector 4, Gate 3, 11:45 AM',
+        match_2: '👱 Match (72%) - Sector 7, Main Road, 11:30 AM',
+        view_details: '[ View Details ]',
+        alert_volunteers: 'Alert Volunteers',
+        traffic_title: 'Smart Traffic<br>Controller',
+        traffic_subtitle: '(Signal 1 - MG Road)',
+        traffic_density_label: 'Traffic Density:',
+        north_density: 'North: 45',
+        south_density: 'South: 12',
+        east_density: 'East: 33',
+        west_density: 'West: 20',
+        current_light_label: 'Current Light:',
+        north_dir: 'North',
+        timer_label: 'Timer: 25s',
+        logs_label: 'Logs:',
+        log_1: '[11:02] North released (45 cars)..',
+        log_2: '[11:05] East released (33 cars)..',
+        log_3: '[11.30] West released (20 cars)..',
+        log_4: '[12.00] South released (12 cars)..',
+        lang_translator_title: 'Language Help &<br>Translator',
+        select_lang_label: 'Select Language:',
+        quick_phrases: 'Quick Phrases:',
+        phrase_1: 'Where is the nearest toilet?',
+        phrase_2: 'How do I reach Gate 5?',
+        phrase_3: 'Please call medical help.',
+        phrase_4: 'I am lost, please help me.',
+        realtime_translator: 'Real-Time Translator',
+        speak_btn: 'Speak',
+        autodetect_btn: 'Auto-Detect (Tamil)',
+        output_text_1: 'Output: "Please help me,<br>I am lost"',
+        play_btn: 'Play',
+        voice_assistant: 'Voice Assistant :',
+        microphone_btn: 'Microphone',
+        say_prompt: 'Say: “Where is parking?”',
+        output_text_2: 'Output: “Nearest parking is<br>200m ahead.”',
+        live_announcement_title: 'Live<br>Announcement !!',
+        notification_label: 'Notification!',
+        urgent_alert_title: '🚨 URGENT ALERT',
+        urgent_alert_msg: 'Avoid XYZ Ghat – heavy crowd reported.',
+        urgent_alert_time: '[ 11:45 AM ]',
+        recent_alerts_title: 'Recent Alerts:',
+        recent_alert_1: '🔔 Procession starting in 10 mins (Sector 4) [11:30]',
+        recent_alert_2: '⚠️ Avoid ABC Road – too crowded [11:15]',
+        recent_alert_3: '🚨 Child lost, Info Booth #5 [11:05]',
+        filters_btn: 'Filters:',
+        safety_btn: 'Safety',
+        info_btn: 'Info',
+        events_btn: 'Events',
+        cleanliness_title: 'Cleanliness & Waste<br>Management',
+        nearby_services: 'Nearby Services:',
+        service_dustbin: 'Dustbin – 120m away',
+        service_toilet: 'Toilet – 300m away',
+        service_cleaning: 'Cleaning Booth – 50m',
+        navigate_btn: 'Navigate',
+        report_cleaning: '! Report Area Needs Cleaning',
+        geo_camera: 'Geo Camera 📷',
+        upload_btn: 'Upload',
+        clean_tip_title: 'Clean Tip:',
+        clean_tip_msg: '"Please use dustbins to keep the<br>ghats clean."',
+        disaster_title: 'Disaster<br>Management',
+        fire_emergency: '🔥 Fire Emergency',
+        loc_sector_12: '📍 Location: Sector 12, Building A',
+        status_fire: '🚨 Status: Active Fire Detected',
+        risk_high: '👥 People at Risk: High (120+)',
+        eta_fire: '⏱️ Response ETA: 8 mins',
+        flood_alert: '🌊 Flood Alert',
+        loc_riverfront: '📍 Location: Riverfront Zone, Gate 3',
+        status_flood: '🚨 Status: Rising Water Level',
+        people_affected: '👥 People Affected: Medium (60+)',
+        eta_flood: '⏱️ Safe Zone ETA: 15 mins',
+        risk_heatmap: '📊 Risk Heatmap on Your Location',
+        status_safe: 'Safe',
+        status_mod: 'Mod',
+        status_danger: 'Danger',
+        alerts_notif_title: '🔔 Alerts & Notifications',
+        alert_fire_sector12: '⚠️ Fire in Sector 12',
+        alert_flood_riverfront: '🌊 Flood near Riverfront',
+        alert_leakage_sector5: '💧 Major Leakage in Sector 5',
+        parking_guidance_title: 'Smart Parking<br>Guidance',
+        parking_lot_a: '🅿️ Parking Lot A - 1.5 km away',
+        status_available: 'Status: ✅ Available (80/200 slots)',
+        navigate_to_parking: 'Navigate to Parking',
+        parking_lot_b: '🅿️ Parking Lot B - 2.3 km away',
+        status_limited: 'Status: ⚠️ Limited (190/200 slots)',
+        parking_lot_c: '🅿️ Parking Lot C - 3.0 km away',
+        status_full: 'Status: ❌ Full',
+        notify_when_available: 'Notify When Available',
+        route_from_to: 'From Parking Lot A ➔ Nearest Entry Gate #4',
+        show_walking_route: 'Show Walking Route',
+        bus_control_title: 'Bus Control',
+        search_bus_route: '🔍 Search Bus / Route:',
+        search_btn: 'Search',
+        live_bus_overview: '🚏 Live Bus Overview',
+        bus_101_route: '[ Bus #101 – Route A ➔ Gate 3 ]',
+        loc_stop_12: '📍 Location: Near Stop 12 (2.3 km)',
+        crowd_high: '👥 Crowd Density: ⚠️ High (80%)',
+        eta_gate_12: '⏱️ ETA to Gate: 12 mins',
+        bus_205_route: '[ Bus #205 – Route B ➔ Gate 7 ]',
+        loc_stop_4: '📍 Location: Near Stop 4 (1.1 km)',
+        crowd_nom: '👥 Crowd Density: ✅ Nom (40%)',
+        eta_gate_7: '⏱️ ETA to Gate: 7 mins',
+        bus_101_overcrowded: '⚠️ Bus #101 overcrowded',
+        route_b_blocked: '🚧 Route B blocked',
+        emergency_medical_title: 'Emergency<br>Medical Service',
+        sos_subtitle: 'Click If Serious Medical Emergency',
+        nearby_hospitals: 'Nearby Hospitals<br>& Clinics',
+        first_aid_team: 'First Aid Team',
+        call_to_ambulance: 'Call To<br>Amubulance',
+        call_btn: 'Call',
+        todays_event_title: 'Todays Event !',
+        event_morning_aarti: 'Morning Aarti (7:30am)',
+        event_holy_dip: 'Holy Dip Ceremony',
+        event_evening_aarti: 'Evening Aarti (7:00pm)',
+        event_shahi_snan: 'Shahi Snan (4:00am)',
+        event_religious_discourses: 'Religious Discourses',
+        event_havan_ceremonies: 'Havan Ceremonies',
+        venue_btn: 'Venue 📍',
+        direction_btn: 'Direction',
+        smart_puja_title: 'Smart Puja 🪔',
+        book_puja_online: '"Book Your Puja Online"',
+        enter_description_puja: 'Enter Description',
+        full_name_puja: '👤 Full Name:',
+        mobile_number: '📱 Mobile Number:',
+        venue_puja: '📍 Venue :',
+        choose_time: '⏰ Choose Time:',
+        pick_time: 'Pick Time:',
+        no_of_people: '👥 No. of People:',
+        select_dropdown: 'Select ▼',
+        choose_date: '🗓️ Choose Date:',
+        pick_date: 'Pick Date:',
+        select_puja_type: '🙏 Select Puja Type: ▼',
+        confirm_booking: 'Confirm Booking',
+        booked_puja: 'Booked Puja 🪔',
+        puja_name_val: 'Puja Name: Rudrabhishek',
+        date_val: 'Date: 20th February 2027',
+        time_val: 'Time: 10:30 AM',
+        venue_val: 'Venue: XYZ Sangham',
+        info_booths_title: 'Info Booths',
+        head_booth: 'Head Booth',
+        click_contact_head: 'Click To Contact<br>Head Booth',
+        click_search_nearest: 'Click To Search<br>Nearest Booth To You!',
+        hotel_management_title: 'Hotel Management',
+        click_search_nearest_hotel: 'Click To Search<br>Nearest Hotel',
+        click_order_food_online: 'Click To Order<br>Food Online',
+        click_contact_emergency_food: 'Click To Contact<br>Emergency Food<br>Service Station',
+        ambulace_btn: 'Ambulace 🚑',
+        police_btn: 'Police 👮',
+        info_booths_btn: 'Info Booths',
+        medical_team_btn: 'Medical Team 🩺',
+        report_a_problem_title: 'Report a Problem',
+        if_you_face_issue: 'If you face any issue during the Mela',
+        chat_with_volunteers: 'Chat with Volunteers',
+        start_chat_now: '[ Start Chat Now ]',
+        how_to_use_guide: 'How to Use This App (Guide)',
+        small_tutorial_text: 'Small step-by-step tutorial<br>with visuals/icons:',
+        report_issues_text: '“Report issues for help and<br>solutions.”',
+        rating_title: 'Rating !'
+      },
+      'Hindi': {
+        profile_info: 'प्रोफाइल जानकारी',
+        home_page_menu: '> होम पेज',
+        login_page_menu: '> लॉगिन पेज',
+        my_circle_tracker_menu: '> माय सर्कल ट्रैकर',
+        offline_maps_menu: '> ऑफलाईन नकाशे',
+        live_heat_map_menu: '> लाइव हीट मैप',
+        ai_lost_finder_menu: '> एआई हरवलेला शोधक',
+        smart_traffic_menu: '> स्मार्ट ट्रॅफिक',
+        language_help_menu: '> भाषा सहायता',
+        live_announcement_menu: '> लाइव घोषणा',
+        cleanliness_management_menu: '> स्वच्छता प्रबंधन',
+        disaster_management_menu: '> आपदा प्रबंधन',
+        smart_parking_menu: '> स्मार्ट पार्किंग',
+        bus_control_menu: '> बस नियंत्रण',
+        medical_emergency_menu: '> चिकित्सा आपात स्थिति',
+        todays_event_menu: '> आज के कार्यक्रम',
+        smart_puja_menu: '> स्मार्ट पूजा',
+        info_booth_menu: '> सूचना बूथ',
+        hotel_management_menu: '> होटल प्रबंधन',
+        sos_menu: '> एसओएस',
+        help_disk_menu: '> हेल्प डेस्क',
+        exit_btn: 'बाहर निकलें',
+        app_title: 'स्मार्ट कुंभ',
+        app_subtitle: 'आपका डिजिटल साथी',
+        register_btn: 'पंजीकरण',
+        login_btn: 'लॉगिन',
+        forget_password: 'पासवर्ड भूल गए !?',
+        emergency_btn: 'आपातकालीन संपर्क !',
+        welcome_register: 'स्वागत हे',
+        welcome_login: 'फिर से स्वागत हे !',
+        full_name: 'पूरा नाम:',
+        email: 'ई-मेल:',
+        contact_no: 'संपर्क नंबर',
+        personal: '(व्यक्तिगत)',
+        address: 'पता:',
+        kumbha_id: 'कुंभ आईडी:',
+        password: 'पासवर्ड:',
+        click_to_continue: 'आगे बढ़ने के लिए क्लिक करें',
+        tracker_title: 'मेरा सर्कल ट्रैकर',
+        band_id: '(WB12345)',
+        enter_id: 'आईडी दर्ज करें:',
+        mention_band: '(बैंड के नीचे उल्लेखित)',
+        add_circle: 'सर्कल में जोड़ें',
+        connected_peoples: 'जुड़े हुए लोग:',
+        loc_label: 'स्थान:',
+        directions: 'दिशा-निर्देश',
+        sos_ring: 'एसओएस रिंग',
+        map_preview: '[जुड़े उपयोगकर्ताओं के पिन के साथ मिनी मैप पूर्वावलोकन]',
+        offline_maps_title: 'ऑफलाइन नक्शों में आपका<br>स्वागत है',
+        find_location: '📍 अपना स्थान खोजें',
+        go_back: 'वापस जाएँ',
+        crowd_title: 'भीड़ का घनत्व',
+        live_heat_map: 'लाइव हीट मैप !',
+        real_time_crowd: 'रियल टाइम भीड़',
+        suggested_route: 'नया सुझाया गया मार्ग',
+        lost_person_title: 'एआई खोया व्यक्ति<br>खोजक',
+        upload_photo: 'हाल का फोटो अपलोड करें:',
+        take_photo: 'फोटो लें',
+        import: 'इम्पोर्ट करें',
+        preview: 'पूर्वावलोकन',
+        enter_desc: 'विवरण दर्ज करें:',
+        label_name: '👤 नाम:',
+        label_clothing: '👗 कपड़े:',
+        label_last_loc: '📍 अंतिम देखा गया स्थान:',
+        select_map: '[ नक्शे पर चुनें ]',
+        label_last_time: '🕒 अंतिम देखा गया समय:',
+        search_ai: 'एआई का उपयोग करके खोजें',
+        possible_matches: 'संभावित मिलान:',
+        match_1: '👱 मिलान (85%) - सेक्टर 4, गेट 3, 11:45 AM',
+        match_2: '👱 मिलान (72%) - सेक्टर 7, मुख्य सड़क, 11:30 AM',
+        view_details: '[ विवरण देखें ]',
+        alert_volunteers: 'स्वयंसेवकों को अलर्ट करें',
+        traffic_title: 'स्मार्ट ट्रैफिक<br>कंट्रोलर',
+        traffic_subtitle: '(सिग्नल 1 - एमजी रोड)',
+        traffic_density_label: 'ट्रैफिक घनत्व:',
+        north_density: 'उत्तर: 45',
+        south_density: 'दक्षिण: 12',
+        east_density: 'पूर्व: 33',
+        west_density: 'पश्चिम: 20',
+        current_light_label: 'वर्तमान लाइट:',
+        north_dir: 'उत्तर',
+        timer_label: 'टाइमर: 25s',
+        logs_label: 'लॉग्स:',
+        log_1: '[11:02] उत्तर छोड़ा गया (45 कारें)..',
+        log_2: '[11:05] पूर्व छोड़ा गया (33 कारें)..',
+        log_3: '[11.30] पश्चिम छोड़ा गया (20 कारें)..',
+        log_4: '[12.00] दक्षिण छोड़ा गया (12 कारें)..',
+        lang_translator_title: 'भाषा सहायता एवं<br>अनुवादक',
+        select_lang_label: 'भाषा चुनें:',
+        quick_phrases: 'त्वरित वाक्यांश:',
+        phrase_1: 'निकटतम शौचालय कहाँ है?',
+        phrase_2: 'मैं गेट 5 तक कैसे पहुँचूँ?',
+        phrase_3: 'कृपया चिकित्सा सहायता बुलाएं।',
+        phrase_4: 'मैं खो गया हूँ, कृपया मेरी मदद करें।',
+        realtime_translator: 'रियल-टाइम अनुवादक',
+        speak_btn: 'बोलें',
+        autodetect_btn: 'ऑटो-डिटेक्ट (तमिल)',
+        output_text_1: 'आउटपुट: "कृपया मेरी मदद करें,<br>मैं खो गया हूँ"',
+        play_btn: 'चलाएं',
+        voice_assistant: 'वॉयस असिस्टेंट :',
+        microphone_btn: 'माइक्रोफोन',
+        say_prompt: 'बोलें: “पार्विंग कहाँ है?”',
+        output_text_2: 'आउटपुट: “निकटतम पार्किंग<br>200 मीटर आगे है।”',
+        live_announcement_title: 'लाइव<br>घोषणा !!',
+        notification_label: 'अधिसूचना!',
+        urgent_alert_title: '🚨 तत्काल अलर्ट',
+        urgent_alert_msg: 'एक्सवाईजेड घाट से बचें - भारी भीड़ दर्ज की गई।',
+        urgent_alert_time: '[ 11:45 AM ]',
+        recent_alerts_title: 'हाल के अलर्ट:',
+        recent_alert_1: '🔔 जुलूस 10 मिनट में शुरू (सेक्टर 4) [11:30]',
+        recent_alert_2: '⚠️ एबीसी रोड से बचें - बहुत भीड़ [11:15]',
+        recent_alert_3: '🚨 बच्चा खो गया, सूचना बूथ #5 [11:05]',
+        filters_btn: 'फ़िल्टर:',
+        safety_btn: 'सुरक्षा',
+        info_btn: 'सूचना',
+        events_btn: 'कार्यक्रम',
+        cleanliness_title: 'स्वच्छता एवं कचरा<br>प्रबंधन',
+        nearby_services: 'पास की सेवाएं:',
+        service_dustbin: 'कूड़ेदान – 120m दूर',
+        service_toilet: 'शौचालय – 300m दूर',
+        service_cleaning: 'सफाई बूथ – 50m',
+        navigate_btn: 'नेविगेट',
+        report_cleaning: '! क्षेत्र की सफाई की आवश्यकता की रिपोर्ट करें',
+        geo_camera: 'जियो कैमरा 📷',
+        upload_btn: 'अपलोड करें',
+        clean_tip_title: 'स्वच्छता सुझाव:',
+        clean_tip_msg: '"घाटों को साफ रखने के लिए<br>कृपया कूड़ेदान का उपयोग करें।"',
+        disaster_title: 'आपदा<br>प्रबंधन',
+        fire_emergency: '🔥 आग की आपातस्थिति',
+        loc_sector_12: '📍 स्थान: सेक्टर 12, बिल्डिंग ए',
+        status_fire: '🚨 स्थिति: सक्रिय आग का पता चला',
+        risk_high: '👥 जोखिम में लोग: उच्च (120+)',
+        eta_fire: '⏱️ प्रतिक्रिया ईटीए: 8 मिनट',
+        flood_alert: '🌊 बाढ़ अलर्ट',
+        loc_riverfront: '📍 स्थान: रिवरफ्रंट ज़ोन, गेट 3',
+        status_flood: '🚨 स्थिति: जल स्तर बढ़ रहा है',
+        people_affected: '👥 प्रभावित लोग: मध्यम (60+)',
+        eta_flood: '⏱️ सुरक्षित क्षेत्र ईटीए: 15 मिनट',
+        risk_heatmap: '📊 आपके स्थान पर जोखिम हीटमैप',
+        status_safe: 'सुरक्षित',
+        status_mod: 'मध्यम',
+        status_danger: 'खतरा',
+        alerts_notif_title: '🔔 अलर्ट और सूचनाएं',
+        alert_fire_sector12: '⚠️ सेक्टर 12 में आग',
+        alert_flood_riverfront: '🌊 रिवरफ्रंट के पास बाढ़',
+        alert_leakage_sector5: '💧 सेक्टर 5 में बड़ा रिसाव',
+        parking_guidance_title: 'स्मार्ट पार्किंग<br>मार्गदर्शन',
+        parking_lot_a: '🅿️ पार्किंग लॉट ए - 1.5 किमी दूर',
+        status_available: 'स्थिति: ✅ उपलब्ध (80/200 स्लॉट)',
+        navigate_to_parking: 'पार्किंग के लिए नेविगेट करें',
+        parking_lot_b: '🅿️ पार्किंग लॉट बी - 2.3 किमी दूर',
+        status_limited: 'स्थिति: ⚠️ सीमित (190/200 स्लॉट)',
+        parking_lot_c: '🅿️ पार्किंग लॉट सी - 3.0 किमी दूर',
+        status_full: 'स्थिति: ❌ पूर्ण',
+        notify_when_available: 'उपलब्ध होने पर सूचित करें',
+        route_from_to: 'पार्किंग लॉट ए ➔ निकटतम प्रवेश द्वार #4 से',
+        show_walking_route: 'पैदल चलने का मार्ग दिखाएं',
+        bus_control_title: 'बस नियंत्रण',
+        search_bus_route: '🔍 बस / मार्ग खोजें:',
+        search_btn: 'खोजें',
+        live_bus_overview: '🚏 लाइव बस अवलोकन',
+        bus_101_route: '[ बस #101 – रूट ए ➔ गेट 3 ]',
+        loc_stop_12: '📍 स्थान: स्टॉप 12 के पास (2.3 किमी)',
+        crowd_high: '👥 भीड़ घनत्व: ⚠️ उच्च (80%)',
+        eta_gate_12: '⏱️ गेट का ईटीए: 12 मिनट',
+        bus_205_route: '[ बस #205 – रूट बी ➔ गेट 7 ]',
+        loc_stop_4: '📍 स्थान: स्टॉप 4 के पास (1.1 किमी)',
+        crowd_nom: '👥 भीड़ घनत्व: ✅ सामान्य (40%)',
+        eta_gate_7: '⏱️ गेट का ईटीए: 7 मिनट',
+        bus_101_overcrowded: '⚠️ बस #101 में अत्यधिक भीड़',
+        route_b_blocked: '🚧 रूट बी अवरुद्ध',
+        emergency_medical_title: 'आपातकालीन<br>चिकित्सा सेवा',
+        sos_subtitle: 'गंभीर चिकित्सा आपातस्थिति होने पर क्लिक करें',
+        nearby_hospitals: 'पास के अस्पताल<br>और क्लीनिक',
+        first_aid_team: 'प्राथमिक उपचार टीम',
+        call_to_ambulance: 'एम्बुलेंस को<br>कॉल करें',
+        call_btn: 'कॉल करें',
+        todays_event_title: 'आज के कार्यक्रम !',
+        event_morning_aarti: 'प्रातः आरती (7:30am)',
+        event_holy_dip: 'पवित्र स्नान समारोह',
+        event_evening_aarti: 'संध्या आरती (7:00pm)',
+        event_shahi_snan: 'शाही स्नान (4:00am)',
+        event_religious_discourses: 'धार्मिक प्रवचन',
+        event_havan_ceremonies: 'हवन समारोह',
+        venue_btn: 'स्थान 📍',
+        direction_btn: 'दिशा',
+        smart_puja_title: 'स्मार्ट पूजा 🪔',
+        book_puja_online: '"ऑनलाइन अपनी पूजा बुक करें"',
+        enter_description_puja: 'विवरण दर्ज करें',
+        full_name_puja: '👤 पूरा नाम:',
+        mobile_number: '📱 मोबाइल नंबर:',
+        venue_puja: '📍 स्थान :',
+        choose_time: '⏰ समय चुनें:',
+        pick_time: 'समय चुनें:',
+        no_of_people: '👥 लोगों की संख्या:',
+        select_dropdown: 'चुनें ▼',
+        choose_date: '🗓️ तारीख चुनें:',
+        pick_date: 'तारीख चुनें:',
+        select_puja_type: '🙏 पूजा का प्रकार चुनें: ▼',
+        confirm_booking: 'बुकिंग की पुष्टि करें',
+        booked_puja: 'बुक की गई पूजा 🪔',
+        puja_name_val: 'पूजा का नाम: रुद्राभिषेक',
+        date_val: 'तारीख: 20 फरवरी 2027',
+        time_val: 'समय: 10:30 AM',
+        venue_val: 'स्थान: एक्सवाईजेड संघम',
+        info_booths_title: 'सूचना बूथ',
+        head_booth: 'मुख्य बूथ',
+        click_contact_head: 'मुख्य बूथ से संपर्क करने<br>के लिए क्लिक करें',
+        click_search_nearest: 'अपने निकटतम बूथ को<br>खोजने के लिए क्लिक करें!',
+        hotel_management_title: 'होटल प्रबंधन',
+        click_search_nearest_hotel: 'निकटतम होटल खोजने<br>के लिए क्लिक करें',
+        click_order_food_online: 'ऑनलाइन खाना ऑर्डर<br>करने के लिए क्लिक करें',
+        click_contact_emergency_food: 'आपातकालीन खाद्य सेवा<br>स्टेशन से संपर्क करने<br>के लिए क्लिक करें',
+        ambulace_btn: 'एम्बुलेंस 🚑',
+        police_btn: 'पुलिस 👮',
+        info_booths_btn: 'सूचना बूथ',
+        medical_team_btn: 'चिकित्सा दल 🩺',
+        report_a_problem_title: 'समस्या की रिपोर्ट करें',
+        if_you_face_issue: 'यदि मेले के दौरान आपको कोई समस्या आती है',
+        chat_with_volunteers: 'स्वयंसेवकों के साथ चैट करें',
+        start_chat_now: '[ अब चैट शुरू करें ]',
+        how_to_use_guide: 'इस ऐप का उपयोग कैसे करें (गाइड)',
+        small_tutorial_text: 'दृश्य/आइकन के साथ<br>छोटा चरण-दर-चरण ट्यूटोरियल:',
+        report_issues_text: '“मदद और समाधान के लिए<br>मुद्दों की रिपोर्ट करें।”',
+        rating_title: 'रेटिंग !'
+      },
+      'Marathi': {
+        profile_info: 'प्रोफाइल माहिती',
+        home_page_menu: '> होम पेज',
+        login_page_menu: '> लॉगिन पेज',
+        my_circle_tracker_menu: '> माझे सर्कल ट्रॅकर',
+        offline_maps_menu: '> ऑफलाईन नकाशे',
+        live_heat_map_menu: '> लाइव्ह हीट मॅप',
+        ai_lost_finder_menu: '> एआई हरवलेला शोधक',
+        smart_traffic_menu: '> स्मार्ट ट्रॅफिक',
+        language_help_menu: '> भाषा मदत',
+        live_announcement_menu: '> थेट जाहीरत',
+        cleanliness_management_menu: '> स्वच्छता व्यवस्थापन',
+        disaster_management_menu: '> आपत्ती व्यवस्थापन',
+        smart_parking_menu: '> स्मार्ट पार्किंग',
+        bus_control_menu: '> बस नियंत्रण',
+        medical_emergency_menu: '> वैद्यकीय आणीबाणी',
+        todays_event_menu: '> आजचे कार्यक्रम',
+        smart_puja_menu: '> स्मार्ट पूजा',
+        info_booth_menu: '> माहिती बूथ',
+        hotel_management_menu: '> हॉटेल व्यवस्थापन',
+        sos_menu: '> एसओएस',
+        help_disk_menu: '> हेल्प डेस्क',
+        exit_btn: 'बाहेर पडा',
+        app_title: 'स्मार्ट कुंभ',
+        app_subtitle: 'आपला डिजिटल साथी',
+        register_btn: 'नोंदणी',
+        login_btn: 'लॉगिन',
+        forget_password: 'पासवर्ड विसरलात !?',
+        emergency_btn: 'आपत्कालीन संपर्क !',
+        welcome_register: 'स्वागत आहे',
+        welcome_login: 'पुन्हा स्वागत आहे !',
+        full_name: 'पूर्ण नाव:',
+        email: 'ई-मेल:',
+        contact_no: 'संपर्क क्रमांक',
+        personal: '(वैयक्तिक)',
+        address: 'पत्ता:',
+        kumbha_id: 'कुंभ आयडी:',
+        password: 'पासवर्ड:',
+        click_to_continue: 'पुढे जाण्यासाठी क्लिक करा',
+        tracker_title: 'माझे सर्कल ट्रॅकर',
+        band_id: '(WB12345)',
+        enter_id: 'आयडी प्रविष्ट करा:',
+        mention_band: '(बँडच्या खाली नमूद केलेले)',
+        add_circle: 'सर्कलमध्ये जोडा',
+        connected_peoples: 'जोडलेले लोक:',
+        loc_label: 'स्थान:',
+        directions: 'दिशा-निर्देश',
+        sos_ring: 'एसओएस रिंग',
+        map_preview: '[जोडलेल्या वापरकर्त्यांसाठी पिनसह मिनी मॅप पूर्वावलोकन]',
+        offline_maps_title: 'ऑफलाइन नकाशे मध्ये<br>आपले स्वागत आहे',
+        find_location: '📍 तुमचे स्थान शोधा',
+        go_back: 'मागे जा',
+        crowd_title: 'गर्दीची घनता',
+        live_heat_map: 'लाइव्ह हीट मॅप !',
+        real_time_crowd: 'रिअल टाइम गर्दी',
+        suggested_route: 'नवीन सुचवलेला मार्ग',
+        lost_person_title: '🧑‍🤝‍🧑 एआई हरवलेली व्यक्ती<br>शोधक',
+        upload_photo: 'अलीकडील फोटो अपलोड करा:',
+        take_photo: 'फोटो घ्या',
+        import: 'इम्पोर्ट करा',
+        preview: 'पूर्वावलोकन',
+        enter_desc: 'वर्णन प्रविष्ट करा:',
+        label_name: '👤 नाव:',
+        label_clothing: '👗 कपडे:',
+        label_last_loc: '📍 शेवटचे पाहिलेले स्थान:',
+        select_map: '[ नकाशावर निवडा ]',
+        label_last_time: '🕒 शेवटची वेळ:',
+        search_ai: 'एआय वापरून शोधा',
+        possible_matches: 'संभाव्य सामने:',
+        match_1: '👱 सामना (85%) - सेक्टर 4, गेट 3, 11:45 AM',
+        match_2: '👱 सामना (72%) - सेक्टर 7, मुख्य रस्ता, 11:30 AM',
+        view_details: '[ विवरण देखें ]',
+        alert_volunteers: 'स्वयंसेवकांना इशारा द्या',
+        traffic_title: 'स्मार्ट ट्रॅफिक<br>कंट्रोलर',
+        traffic_subtitle: '(सिग्नल 1 - एमजी रोड)',
+        traffic_density_label: 'ट्रॅफिक घनता:',
+        north_density: 'उत्तर: 45',
+        south_density: 'दक्षिण: 12',
+        east_density: 'पूर्व: 33',
+        west_density: 'पश्चिम: 20',
+        current_light_label: 'सध्याचा दिवा:',
+        north_dir: 'उत्तर',
+        timer_label: 'टायमर: 25s',
+        logs_label: 'लॉग्स:',
+        log_1: '[11:02] उत्तर सोडले (45 गाड्या)..',
+        log_2: '[11:05] पूर्व सोडले (33 गाड्या)..',
+        log_3: '[11.30] पश्चिम सोडले (20 गाड्या)..',
+        log_4: '[12.00] दक्षिण सोडले (12 गाड्या)..',
+        lang_translator_title: 'भाषा मदत आणि<br>भाषांतरकार',
+        select_lang_label: 'भाषा निवडा:',
+        quick_phrases: 'जलद वाक्ये:',
+        phrase_1: 'जवळचे शौचालय कोठे आहे?',
+        phrase_2: 'मी गेट 5 वर कसा पोहोचू?',
+        phrase_3: 'कृपया वैद्यकीय मदत बोलवा.',
+        phrase_4: 'मी हरवलो आहे, कृपया मला मदत करा.',
+        realtime_translator: 'रिअल-टाइम भाषांतरकार',
+        speak_btn: 'बोला',
+        autodetect_btn: 'ऑटो-डिटेक्ट (तमिळ)',
+        output_text_1: 'आउटपुट: "कृपया मला मदत करा,<br>मी हरवलो आहे"',
+        play_btn: 'प्ले',
+        voice_assistant: 'व्हॉइस असिस्टंट :',
+        microphone_btn: 'मायक्रोफोन',
+        say_prompt: 'म्हणा: “पार्किंग कोठे आहे?”',
+        output_text_2: 'आउटपुट: “जवळचे पार्किंग<br>200 मीटर पुढे आहे.”',
+        live_announcement_title: 'थेट<br>जाहिरत !!',
+        notification_label: 'सूचना!',
+        urgent_alert_title: '🚨 तातडीचा इशारा',
+        urgent_alert_msg: 'एक्सवायझेड घाटावर जाणे टाळा – मोठी गर्दी झाली आहे.',
+        urgent_alert_time: '[ 11:45 AM ]',
+        recent_alerts_title: 'अलीकडील इशारे:',
+        recent_alert_1: '🔔 मिरवणूक 10 मिनिटांत सुरू (सेक्टर 4) [11:30]',
+        recent_alert_2: '⚠️ एबीसी रोड टाळा – खूप गर्दी [11:15]',
+        recent_alert_3: '🚨 मूल हरवले, माहिती बूथ #5 [11:05]',
+        filters_btn: 'फिल्टर्स:',
+        safety_btn: 'सुरक्षा',
+        info_btn: 'माहिती',
+        events_btn: 'कार्यक्रम',
+        cleanliness_title: 'स्वच्छता आणि कचरा<br>व्यवस्थापन',
+        nearby_services: 'जवळपासच्या सेवा:',
+        service_dustbin: 'कचराकुंडी – 120m लांब',
+        service_toilet: 'शौचालय – 300m लांब',
+        service_cleaning: 'सफाई बूथ – 50m',
+        navigate_btn: 'नेव्हिगेट',
+        report_cleaning: '! परिसराची स्वच्छता करण्याची आवश्यकता नोंदवा',
+        geo_camera: 'जिओ कॅमेरा 📷',
+        upload_btn: 'अपलोड करा',
+        clean_tip_title: 'स्वच्छता टीप:',
+        clean_tip_msg: '"घाट स्वच्छ ठेवण्यासाठी कृपया<br>कचराकुंडीचा वापर करा."',
+        disaster_title: 'आपत्ती<br>व्यवस्थापन',
+        fire_emergency: '🔥 आगीची आणीबाणी',
+        loc_sector_12: '📍 स्थान: सेक्टर 12, इमारत ए',
+        status_fire: '🚨 स्थिती: आग आढळली',
+        risk_high: '👥 धोक्यात असलेले लोक: जास्त (120+)',
+        eta_fire: '⏱️ प्रतिसाद ईटीए: 8 मिनिटे',
+        flood_alert: '🌊 पूर इशारा',
+        loc_riverfront: '📍 स्थान: रिव्हरफ्रंट झोन, गेट 3',
+        status_flood: '🚨 स्थिती: पाण्याची पातळी वाढत आहे',
+        people_affected: '👥 बाधित लोक: मध्यम (60+)',
+        eta_flood: '⏱️ सुरक्षित क्षेत्र ईटीए: 15 मिनिटे',
+        risk_heatmap: '📊 तुमच्या स्थानावरील धोका हीटमॅप',
+        status_safe: 'सुरक्षित',
+        status_mod: 'मध्यम',
+        status_danger: 'धोका',
+        alerts_notif_title: '🔔 इशारे आणि सूचना',
+        alert_fire_sector12: '⚠️ सेक्टर 12 मध्ये आग',
+        alert_flood_riverfront: '🌊 रिव्हरफ्रंटजवळ पूर',
+        alert_leakage_sector5: '💧 सेक्टर 5 मध्ये मोठी गळती',
+        parking_guidance_title: 'स्मार्ट पार्किंग<br>मार्गदर्शन',
+        parking_lot_a: '🅿️ पार्किंग लॉट ए - 1.5 किमी लांब',
+        status_available: 'स्थिती: ✅ उपलब्ध (80/200 स्लॉट)',
+        navigate_to_parking: 'पार्किंगकडे नेव्हिगेट करा',
+        parking_lot_b: '🅿️ पार्किंग लॉट बी - 2.3 किमी लांब',
+        status_limited: 'स्थिती: ⚠️ मर्यादित (190/200 स्लॉट)',
+        parking_lot_c: '🅿️ पार्किंग लॉट सी - 3.0 किमी लांब',
+        status_full: 'स्थिती: ❌ पूर्ण',
+        notify_when_available: 'उपलब्ध झाल्यावर सूचित करा',
+        route_from_to: 'पार्किंग लॉट ए ➔ जवळचे प्रवेश द्वार #4 वरून',
+        show_walking_route: 'चालण्याचा मार्ग दाखवा',
+        bus_control_title: 'बस नियंत्रण',
+        search_bus_route: '🔍 बस / मार्ग शोधा:',
+        search_btn: 'शोधा',
+        live_bus_overview: '🚏 थेट बस विहंगावलोकन',
+        bus_101_route: '[ बस #101 – रूट ए ➔ गेट 3 ]',
+        loc_stop_12: 'स्थान: स्टॉप 12 जवळ (2.3 किमी)',
+        crowd_high: 'गर्दीची घनता:  ⚠️  जास्त (80%)',
+        eta_gate_12: 'गेटचे ईटीए: 12 मिनिटे',
+        bus_205_route: '[ बस #205 – रूट बी ➔ गेट 7 ]',
+        loc_stop_4: 'स्थान: स्टॉप 4 जवळ (1.1 किमी)',
+        crowd_nom: 'गर्दीची घनता:  ✅  सामान्य (40%)',
+        eta_gate_7: 'गेटचे ईटीए: 7 मिनिटे',
+        bus_101_overcrowded: '⚠️ बस #101 मध्ये जास्त गर्दी',
+        route_b_blocked: 'रूट बी बंद',
+        emergency_medical_title: 'आपत्कालीन<br>वैद्यकीय सेवा',
+        sos_subtitle: 'गंभीर वैद्यकीय आणीबाणी असल्यास क्लिक करा',
+        nearby_hospitals: 'जवळपासची रुग्णालये<br>आणि क्लिनिक',
+        first_aid_team: 'प्रथमोपचार टीम',
+        call_to_ambulance: 'ॲम्बुलन्सला<br>कॉल करा',
+        call_btn: 'कॉल करा',
+        todays_event_title: 'आजचे कार्यक्रम !',
+        event_morning_aarti: 'सकाळची आरती (7:30am)',
+        event_holy_dip: 'पवित्र स्नान सोहळा',
+        event_evening_aarti: 'संध्याकाळची आरती (7:00pm)',
+        event_shahi_snan: 'शाही स्नान (4:00am)',
+        event_religious_discourses: 'धार्मिक प्रवचन',
+        event_havan_ceremonies: 'हवन सोहळा',
+        venue_btn: 'ठिकाण 📍',
+        direction_btn: 'दिशा',
+        smart_puja_title: 'स्मार्ट पूजा 🪔',
+        book_puja_online: '"ऑनलाइन आपली पूजा बुक करा"',
+        enter_description_puja: 'वर्णन प्रविष्ट करा',
+        full_name_puja: '👤 पूर्ण नाव:',
+        mobile_number: '📱 मोबाईल नंबर:',
+        venue_puja: '📍 ठिकाण :',
+        choose_time: '⏰ वेळ निवडा:',
+        pick_time: 'वेळ निवडा:',
+        no_of_people: '👥 लोकांची संख्या:',
+        select_dropdown: 'निवडा ▼',
+        choose_date: '🗓️ दिनांक निवडा:',
+        pick_date: 'दिनांक निवडा:',
+        select_puja_type: '🙏 पूजेचा प्रकार निवडा: ▼',
+        confirm_booking: 'बुकिंगची पुष्टी करा',
+        booked_puja: 'बुक केलेली पूजा 🪔',
+        puja_name_val: 'पूजेचे नाव: रुद्राभिषेक',
+        date_val: 'दिनांक: 20 फेब्रुवारी 2027',
+        time_val: 'वेळ: 10:30 AM',
+        venue_val: 'ठिकाण: एक्सवायझेड संघम',
+        info_booths_title: 'माहिती बूथ',
+        head_booth: 'मुख्य बूथ',
+        click_contact_head: 'मुख्य बूथशी संपर्क साधण्यासाठी<br>क्लिक करा',
+        click_search_nearest: 'आपल्या जवळील बूथ<br>शोधण्यासाठी क्लिक करा!',
+        hotel_management_title: 'हॉटेल व्यवस्थापन',
+        click_search_nearest_hotel: 'जवळील हॉटेल शोधण्यासाठी<br>क्लिक करा',
+        click_order_food_online: 'ऑनलाइन अन्न ऑर्डर<br>करण्यासाठी क्लिक करा',
+        click_contact_emergency_food: 'आपत्कालीन अन्न सेवा<br>स्टेशनशी संपर्क साधण्यासाठी<br>क्लिक करा',
+        ambulace_btn: 'ॲम्बुलन्स 🚑',
+        police_btn: 'पोलीस 👮',
+        info_booths_btn: 'माहिती बूथ',
+        medical_team_btn: 'वैद्यकीय टीम 🩺',
+        report_a_problem_title: 'समस्येची तक्रार करा',
+        if_you_face_issue: 'मेळ्यादरम्यान तुम्हाला काही समस्या आल्यास',
+        chat_with_volunteers: 'स्वयंसेवकांशी चॅट करा',
+        start_chat_now: '[ आता चॅट सुरू करा ]',
+        how_to_use_guide: 'हे ॲप कसे वापरावे (मार्गदर्शक)',
+        small_tutorial_text: 'चित्रे/आयकॉनसह<br>लहान टप्प्याटप्प्याने ट्यूटोरियल:',
+        report_issues_text: '“मदत आणि समाधानासाठी<br>समस्यांची तक्रार करा.”',
+        rating_title: 'रेटिंग !'
+      }
+    };
+
+    function changeLanguage(lang) {
+      const data = i18n[lang] || i18n['English'];
+      document.getElementById('t_profile_info').innerText = data.profile_info;
+      document.getElementById('t_home_page_menu').innerText = data.home_page_menu;
+      document.getElementById('t_login_page_menu').innerText = data.login_page_menu;
+      document.getElementById('t_my_circle_tracker_menu').innerText = data.my_circle_tracker_menu;
+      document.getElementById('t_offline_maps_menu').innerText = data.offline_maps_menu;
+      document.getElementById('t_live_heat_map_menu').innerText = data.live_heat_map_menu;
+      document.getElementById('t_ai_lost_finder_menu').innerText = data.ai_lost_finder_menu;
+      document.getElementById('t_smart_traffic_menu').innerText = data.smart_traffic_menu;
+      document.getElementById('t_language_help_menu').innerText = data.language_help_menu;
+      document.getElementById('t_live_announcement_menu').innerText = data.live_announcement_menu;
+      document.getElementById('t_cleanliness_management_menu').innerText = data.cleanliness_management_menu;
+      document.getElementById('t_disaster_management_menu').innerText = data.disaster_management_menu;
+      document.getElementById('t_smart_parking_menu').innerText = data.smart_parking_menu;
+      document.getElementById('t_bus_control_menu').innerText = data.bus_control_menu;
+      document.getElementById('t_medical_emergency_menu').innerText = data.medical_emergency_menu;
+      document.getElementById('t_todays_event_menu').innerText = data.todays_event_menu;
+      document.getElementById('t_smart_puja_menu').innerText = data.smart_puja_menu;
+      document.getElementById('t_info_booth_menu').innerText = data.info_booth_menu;
+      document.getElementById('t_hotel_management_menu').innerText = data.hotel_management_menu;
+      document.getElementById('t_sos_menu').innerText = data.sos_menu;
+      document.getElementById('t_help_disk_menu').innerText = data.help_disk_menu;
+      document.getElementById('t_exit_btn').innerText = data.exit_btn;
+
+      document.getElementById('t_app_title').innerText = data.app_title;
+      document.getElementById('t_app_subtitle').innerText = data.app_subtitle;
+      document.getElementById('t_register_btn').innerText = data.register_btn;
+      document.getElementById('t_login_btn').innerText = data.login_btn;
+      document.getElementById('t_forget_password').innerText = data.forget_password;
+      document.getElementById('t_emergency_btn').innerText = data.emergency_btn;
+      document.getElementById('t_welcome_register').innerText = data.welcome_register;
+      document.getElementById('t_welcome_login').innerText = data.welcome_login;
+      document.getElementById('t_full_name').innerText = data.full_name;
+      document.getElementById('t_email').innerText = data.email;
+      document.getElementById('t_email_2').innerText = data.email;
+      document.getElementById('t_contact_no').childNodes[0].nodeValue = data.contact_no;
+      document.getElementById('t_personal').innerText = data.personal;
+      document.getElementById('t_address').innerText = data.address;
+      document.getElementById('t_kumbha_id').innerText = data.kumbha_id;
+      document.getElementById('t_kumbha_id_2').innerText = data.kumbha_id;
+      document.getElementById('t_password').innerText = data.password;
+      document.getElementById('t_password_2').innerText = data.password;
+      document.getElementById('t_click_continue_1').innerText = data.click_to_continue;
+      document.getElementById('t_click_continue_2').innerText = data.click_to_continue;
+      document.getElementById('t_click_continue_3').innerText = data.click_to_continue;
+      
+      document.getElementById('t_tracker_title').innerText = data.tracker_title;
+      document.getElementById('t_band_id').innerText = data.band_id;
+      document.getElementById('t_enter_id').innerText = data.enter_id;
+      document.getElementById('t_mention_band').innerText = data.mention_band;
+      document.getElementById('t_add_circle').innerText = data.add_circle;
+      document.getElementById('t_connected_peoples').innerText = data.connected_peoples;
+      document.getElementById('t_map_preview').innerText = data.map_preview;
+
+      document.getElementById('t_offline_maps_title').innerHTML = data.offline_maps_title;
+      document.getElementById('t_find_location').innerText = data.find_location;
+      document.getElementById('t_go_back').innerText = data.go_back;
+
+      document.getElementById('t_crowd_title').innerText = data.crowd_title;
+      document.getElementById('t_live_heat_map').innerText = data.live_heat_map;
+      document.getElementById('t_real_time_crowd').innerText = data.real_time_crowd;
+      document.getElementById('t_suggested_route').innerText = data.suggested_route;
+
+      document.getElementById('t_lost_person_title').innerHTML = data.lost_person_title;
+      document.getElementById('t_upload_photo').innerText = data.upload_photo;
+      document.getElementById('t_take_photo').innerText = data.take_photo;
+      document.getElementById('t_import').innerText = data.import;
+      document.getElementById('t_preview').innerText = data.preview;
+      document.getElementById('t_enter_desc').innerText = data.enter_desc;
+      document.getElementById('t_label_name').innerText = data.label_name;
+      document.getElementById('t_label_clothing').innerText = data.label_clothing;
+      document.getElementById('t_label_last_loc').innerText = data.label_last_loc;
+      document.getElementById('t_select_map').innerText = data.select_map;
+      document.getElementById('t_label_last_time').innerText = data.label_last_time;
+      document.getElementById('t_search_ai').innerText = data.search_ai;
+      document.getElementById('t_possible_matches').innerText = data.possible_matches;
+      document.getElementById('t_match_1').innerText = data.match_1;
+      document.getElementById('t_match_2').innerText = data.match_2;
+      document.getElementById('t_alert_volunteers').innerText = data.alert_volunteers;
+
+      document.getElementById('t_traffic_title').innerHTML = data.traffic_title;
+      document.getElementById('t_traffic_subtitle').innerText = data.traffic_subtitle;
+      document.getElementById('t_traffic_density_label').innerText = data.traffic_density_label;
+      document.getElementById('t_north_density').innerText = data.north_density;
+      document.getElementById('t_south_density').innerText = data.south_density;
+      document.getElementById('t_east_density').innerText = data.east_density;
+      document.getElementById('t_west_density').innerText = data.west_density;
+      document.getElementById('t_current_light_label').innerText = data.current_light_label;
+      document.getElementById('t_north_dir').innerText = data.north_dir;
+      document.getElementById('t_timer_label').innerText = data.timer_label;
+      document.getElementById('t_logs_label').innerText = data.logs_label;
+      document.getElementById('t_log_1').innerText = data.log_1;
+      document.getElementById('t_log_2').innerText = data.log_2;
+      document.getElementById('t_log_3').innerText = data.log_3;
+      document.getElementById('t_log_4').innerText = data.log_4;
+
+      document.getElementById('t_lang_translator_title').innerHTML = data.lang_translator_title;
+      document.getElementById('t_select_lang_label').innerText = data.select_lang_label;
+      document.getElementById('t_quick_phrases').innerText = data.quick_phrases;
+      document.getElementById('t_phrase_1').innerText = data.phrase_1;
+      document.getElementById('t_phrase_2').innerText = data.phrase_2;
+      document.getElementById('t_phrase_3').innerText = data.phrase_3;
+      document.getElementById('t_phrase_4').innerText = data.phrase_4;
+      document.getElementById('t_realtime_translator').innerText = data.realtime_translator;
+      document.getElementById('t_speak_btn').innerText = data.speak_btn;
+      document.getElementById('t_autodetect_btn').innerText = data.autodetect_btn;
+      document.getElementById('t_output_text_1').innerHTML = data.output_text_1;
+      document.getElementById('t_play_btn').innerText = data.play_btn;
+      document.getElementById('t_voice_assistant').innerText = data.voice_assistant;
+      document.getElementById('t_microphone_btn').innerText = data.microphone_btn;
+      document.getElementById('t_say_prompt').innerText = data.say_prompt;
+      document.getElementById('t_output_text_2').innerHTML = data.output_text_2;
+
+      document.getElementById('t_live_announcement_title').innerHTML = data.live_announcement_title;
+      document.getElementById('t_notification_label').innerText = data.notification_label;
+      document.getElementById('t_urgent_alert_title').innerText = data.urgent_alert_title;
+      document.getElementById('t_urgent_alert_msg').innerText = data.urgent_alert_msg;
+      document.getElementById('t_urgent_alert_time').innerText = data.urgent_alert_time;
+      document.getElementById('t_recent_alerts_title').innerText = data.recent_alerts_title;
+      document.getElementById('t_recent_alert_1').innerText = data.recent_alert_1;
+      document.getElementById('t_recent_alert_2').innerText = data.recent_alert_2;
+      document.getElementById('t_recent_alert_3').innerText = data.recent_alert_3;
+      document.getElementById('t_filters_btn').innerText = data.filters_btn;
+      document.getElementById('t_safety_btn').innerText = data.safety_btn;
+      document.getElementById('t_info_btn').innerText = data.info_btn;
+      document.getElementById('t_events_btn').innerText = data.events_btn;
+
+      document.getElementById('t_cleanliness_title').innerHTML = data.cleanliness_title;
+      document.getElementById('t_nearby_services').innerText = data.nearby_services;
+      document.getElementById('t_service_dustbin').innerText = data.service_dustbin;
+      document.getElementById('t_service_toilet').innerText = data.service_toilet;
+      document.getElementById('t_service_cleaning').innerText = data.service_cleaning;
+      document.getElementById('t_report_cleaning').innerText = data.report_cleaning;
+      document.getElementById('t_geo_camera').innerText = data.geo_camera;
+      document.getElementById('t_upload_btn').innerText = data.upload_btn;
+      document.getElementById('t_clean_tip_title').innerText = data.clean_tip_title;
+      document.getElementById('t_clean_tip_msg').innerHTML = data.clean_tip_msg;
+
+      document.getElementById('t_disaster_title').innerHTML = data.disaster_title;
+      document.getElementById('t_fire_emergency').innerText = data.fire_emergency;
+      document.getElementById('t_loc_sector_12').innerText = data.loc_sector_12;
+      document.getElementById('t_status_fire').innerText = data.status_fire;
+      document.getElementById('t_risk_high').innerText = data.risk_high;
+      document.getElementById('t_eta_fire').innerText = data.eta_fire;
+      document.getElementById('t_flood_alert').innerText = data.flood_alert;
+      document.getElementById('t_loc_riverfront').innerText = data.loc_riverfront;
+      document.getElementById('t_status_flood').innerText = data.status_flood;
+      document.getElementById('t_people_affected').innerText = data.people_affected;
+      document.getElementById('t_eta_flood').innerText = data.eta_flood;
+      document.getElementById('t_risk_heatmap').innerText = data.risk_heatmap;
+      document.getElementById('t_status_safe').innerText = data.status_safe;
+      document.getElementById('t_status_mod').innerText = data.status_mod;
+      document.getElementById('t_status_danger').innerText = data.status_danger;
+      document.getElementById('t_alerts_notif_title').innerText = data.alerts_notif_title;
+      document.getElementById('t_alert_fire_sector12').innerText = data.alert_fire_sector12;
+      document.getElementById('t_alert_flood_riverfront').innerText = data.alert_flood_riverfront;
+      document.getElementById('t_alert_leakage_sector5').innerText = data.alert_leakage_sector5;
+
+      document.getElementById('t_parking_guidance_title').innerHTML = data.parking_guidance_title;
+      document.getElementById('t_parking_lot_a').innerText = data.parking_lot_a;
+      document.getElementById('t_status_available').innerText = data.status_available;
+      document.getElementById('t_parking_lot_b').innerText = data.parking_lot_b;
+      document.getElementById('t_status_limited').innerText = data.status_limited;
+      document.getElementById('t_parking_lot_c').innerText = data.parking_lot_c;
+      document.getElementById('t_status_full').innerText = data.status_full;
+      document.getElementById('t_notify_when_available').innerText = data.notify_when_available;
+      document.getElementById('t_route_from_to').innerText = data.route_from_to;
+      document.getElementById('t_show_walking_route').innerText = data.show_walking_route;
+
+      document.getElementById('t_bus_control_title').innerText = data.bus_control_title;
+      document.getElementById('t_search_bus_route').innerText = data.search_bus_route;
+      document.getElementById('t_search_btn').innerText = data.search_btn;
+      document.getElementById('t_live_bus_overview_1').innerText = data.live_bus_overview;
+      document.getElementById('t_live_bus_overview_2').innerText = data.live_bus_overview;
+      document.getElementById('t_bus_101_route').innerText = data.bus_101_route;
+      document.getElementById('t_loc_stop_12').innerText = data.loc_stop_12;
+      document.getElementById('t_crowd_high').innerText = data.crowd_high;
+      document.getElementById('t_eta_gate_12').innerText = data.eta_gate_12;
+      document.getElementById('t_bus_205_route').innerText = data.bus_205_route;
+      document.getElementById('t_loc_stop_4').innerText = data.loc_stop_4;
+      document.getElementById('t_crowd_nom').innerText = data.crowd_nom;
+      document.getElementById('t_eta_gate_7').innerText = data.eta_gate_7;
+      document.getElementById('t_alerts_notif_title_2').innerText = data.alerts_notif_title;
+      document.getElementById('t_bus_101_overcrowded').innerText = data.bus_101_overcrowded;
+      document.getElementById('t_route_b_blocked').innerText = data.route_b_blocked;
+
+      document.getElementById('t_emergency_medical_title').innerHTML = data.emergency_medical_title;
+      document.getElementById('t_sos_subtitle').innerText = data.sos_subtitle;
+      document.getElementById('t_nearby_hospitals').innerHTML = data.nearby_hospitals;
+      document.getElementById('t_first_aid_team').innerText = data.first_aid_team;
+      document.getElementById('t_call_to_ambulance').innerHTML = data.call_to_ambulance;
+
+      document.getElementById('t_todays_event_title').innerText = data.todays_event_title;
+      document.getElementById('t_event_morning_aarti').innerText = data.event_morning_aarti;
+      document.getElementById('t_event_holy_dip').innerText = data.event_holy_dip;
+      document.getElementById('t_event_evening_aarti').innerText = data.event_evening_aarti;
+      document.getElementById('t_event_shahi_snan').innerText = data.event_shahi_snan;
+      document.getElementById('t_event_religious_discourses').innerText = data.event_religious_discourses;
+      document.getElementById('t_event_havan_ceremonies').innerText = data.event_havan_ceremonies;
+
+      document.getElementById('t_smart_puja_title').innerText = data.smart_puja_title;
+      document.getElementById('t_book_puja_online').innerText = data.book_puja_online;
+      document.getElementById('t_enter_description_puja').innerText = data.enter_description_puja;
+      document.getElementById('t_full_name_puja').innerText = data.full_name_puja;
+      document.getElementById('t_mobile_number').innerText = data.mobile_number;
+      document.getElementById('t_venue_puja').innerText = data.venue_puja;
+      document.getElementById('t_choose_time').innerText = data.choose_time;
+      document.getElementById('t_no_of_people').innerText = data.no_of_people;
+      document.getElementById('t_choose_date').innerText = data.choose_date;
+      document.getElementById('t_select_puja_type').innerText = data.select_puja_type;
+      document.getElementById('t_confirm_booking').innerText = data.confirm_booking;
+      document.getElementById('t_booked_puja').innerText = data.booked_puja;
+      document.getElementById('t_puja_name_val').innerText = data.puja_name_val;
+      document.getElementById('t_date_val').innerText = data.date_val;
+      document.getElementById('t_time_val').innerText = data.time_val;
+      document.getElementById('t_venue_val').innerText = data.venue_val;
+
+      document.getElementById('t_info_booths_title').innerText = data.info_booths_title;
+      document.getElementById('t_head_booth').innerText = data.head_booth;
+      document.getElementById('t_click_contact_head').innerHTML = data.click_contact_head;
+      document.getElementById('t_click_search_nearest').innerHTML = data.click_search_nearest;
+
+      document.getElementById('t_hotel_management_title').innerText = data.hotel_management_title;
+      document.getElementById('t_click_search_nearest_hotel').innerHTML = data.click_search_nearest_hotel;
+      document.getElementById('t_click_order_food_online').innerHTML = data.click_order_food_online;
+      document.getElementById('t_click_contact_emergency_food').innerHTML = data.click_contact_emergency_food;
+
+      document.getElementById('t_ambulace_btn').innerText = data.ambulace_btn;
+      document.getElementById('t_police_btn').innerText = data.police_btn;
+      document.getElementById('t_info_booths_btn').innerText = data.info_booths_btn;
+      document.getElementById('t_medical_team_btn').innerText = data.medical_team_btn;
+
+      document.getElementById('t_report_a_problem_title').innerText = data.report_a_problem_title;
+      document.getElementById('t_report_a_problem_sec').innerText = data.report_a_problem_title;
+      document.getElementById('t_if_you_face_issue').innerText = data.if_you_face_issue;
+      document.getElementById('t_chat_with_volunteers').innerText = data.chat_with_volunteers;
+      document.getElementById('t_start_chat_now').innerText = data.start_chat_now;
+      document.getElementById('t_how_to_use_guide').innerText = data.how_to_use_guide;
+      document.getElementById('t_small_tutorial_text').innerHTML = data.small_tutorial_text;
+      document.getElementById('t_report_issues_text').innerHTML = data.report_issues_text;
+      document.getElementById('t_rating_title').innerText = data.rating_title;
+
+      document.querySelectorAll('.t_loc_label').forEach(el => el.innerText = data.loc_label);
+      document.querySelectorAll('.t_directions').forEach(el => el.innerText = data.directions);
+      document.querySelectorAll('.t_sos_ring').forEach(el => el.innerText = data.sos_ring);
+      document.querySelectorAll('.t_view_details').forEach(el => el.innerText = data.view_details);
+      document.querySelectorAll('.t_navigate_btn').forEach(el => el.innerText = data.navigate_btn);
+      document.querySelectorAll('.t_nav_parking').forEach(el => el.innerText = data.navigate_to_parking);
+      document.querySelectorAll('.t_track_live').forEach(el => el.innerText = data.track_live);
+      document.querySelectorAll('.t_send_alert').forEach(el => el.innerText = data.send_alert);
+      document.querySelectorAll('.t_call_btn').forEach(el => el.innerText = data.call_btn);
+      document.querySelectorAll('.t_venue_btn').forEach(el => el.innerText = data.venue_btn);
+      document.querySelectorAll('.t_direction_btn').forEach(el => el.innerText = data.direction_btn);
+
+      showToast('Language changed to ' + lang);
+    }
+
+    function showPage(pageId) {
+      pages.forEach(p => {
+        const el = document.getElementById(p);
+        if (p === pageId) {
+          el.classList.add('active');
+          el.classList.remove('left');
+        } else if (pages.indexOf(p) < pages.indexOf(pageId)) {
+          el.classList.remove('active');
+          el.classList.add('left');
+        } else {
+          el.classList.remove('active');
+          el.classList.remove('left');
+        }
+      });
+    }
+
+    function showToast(msg) {
+      const toast = document.getElementById('toast');
+      toast.innerText = msg;
+      toast.classList.add('show');
+      setTimeout(() => {
+        toast.classList.remove('show');
+      }, 2000);
+    }
+  </script>
+</body>
+</html>

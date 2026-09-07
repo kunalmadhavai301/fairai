@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>20260730232434_2124UCSM1054_VAPT</title>
+    <style>
+        body { font-family: system-ui, sans-serif; line-height: 1.6; max-width: 800px; margin: 40px auto; padding: 20px; color: #333; }
+        p { margin-bottom: 1em; }
+    </style>
+</head>
+<body>
+    <h1>20260730232434_2124UCSM1054_VAPT</h1>
+    <p>--- Page 1 ---
+Name: Kunal Tatyasaheb Madhavai 
+PRN:2124UCSM1054 
+ 
+Unit 1: Web Technology & Reconnaissance Perform passive OSINT reconnaissance on a target 
+domain by analyzing HTTP headers, enumerating subdomains with passive tools, and using Google 
+Dorks to find exposed configuration files 
+• 
+HTTP Headers 
+ 
+ 
+• 
+Passive Subdomain Enumeration</p><p>--- Page 2 ---
+Tool Used: crt.sh 
+ 
+Target Domain: example.com 
+Observation: 
+Certificate Transparency logs were checked for the target domain. 
+Matching Identities: 
+- *.example.com 
+- example.com 
+Issuer: 
+Cloudflare TLS Issuing CA 
+• 
+Enumerating Subdomains with Passive Tools  
+Tool: Subfinder  
+ Commands: subfinder -d ietf.org subfinder -d ietf.org -o output.txt cat output.txt  
+ Purpose: To enumerate publicly known subdomains of the target domain using passive OSINT 
+techniques.  Observation: Subfinder identified publicly available subdomains associated with the target 
+domain</p><p>--- Page 3 ---
+ 
+ 
+• 
+Google Dorks 
+ 
+Query: site:example.com filetype:conf 
+Purpose:To identify publicly indexed configuration files. 
+Observation:No publicly indexed configuration files were found. 
+ 
+Recommendation: 
+• 
+Sensitive configuration files should not be publicly accessible.  
+• 
+Proper access control should be implemented.</p><p>--- Page 4 ---
+• 
+Unnecessary information disclosure through headers should be avoided.  
+• 
+Regular security reviews should be performed.  
+Conclusion: 
+• 
+Passive OSINT reconnaissance was performed on the authorized target environment.  
+• 
+HTTP headers, passive subdomain information, and Google Dork queries were analyzed.  
+• 
+The findings were documented as part of the reconnaissance process.</p>
+</body>
+</html>

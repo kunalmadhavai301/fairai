@@ -1,0 +1,149 @@
+--- Page 1 ---
+Autonomous Network Intelligence & Security Assessment System
+Cyber knights
+KUNAL MADHAVAI
+GAURAV TUWAR
+SAMRUDDH SHELKE
+JANHVAI PAWAR
+DHANASHRI MADHAVAI
+Bootcamp on Intelligent Cyber Forensics: 
+AI-Powered Investigation & Incident Response
+
+
+--- Page 2 ---
+PROBLEM STATEMENT :
+Create an AI-powered Autonomous Network Intelligence & Security Assessment System (ANISAS) that 
+uses a single public IP address as input to automatically identify, evaluate, and display an authorized 
+network's security posture via an intelligent risk assessment and interactive dashboard.
+IMPORTANCE :
+•
+Increasing cyber threats
+•
+Faster risk identification
+•
+Improved security decision-making
+
+
+--- Page 3 ---
+DOMAIN & RELEVANCE
+ :
+Domain
+•
+Cybersecurity
+•
+Network Security
+•
+Threat Intelligence
+Relevance
+•
+Helps organizations identify security risks.
+•
+Provides better visibility into network exposure.
+.
+
+
+--- Page 4 ---
+PROPOSED SOLUTION 
+OVERVIEW :
+•
+Accepts a public IP as input.
+•
+Collects data from Nmap, Shodan, AbuseIPDB and NVD
+•
+Performs AI-based risk analysis
+•
+Generates interactive dashboard and reports.
+•
+Provides security recommendations.
+
+
+--- Page 5 ---
+TECHNICAL
+ WORKFLOW :
+
+
+--- Page 6 ---
+AGENTIC AI USED:
+Role of AI
+•
+Analyze scan results
+•
+Correlate threat intelligence
+•
+Prioritize vulnerabilities
+•
+Generate executive summary
+•
+Recommend security improvements
+•
+AI Used: n8n AI Agent
+
+
+--- Page 7 ---
+IMPLEMENTATION & 
+TOOLS :
+Frontend
+•
+Next.js, React, TypeScript
+•
+Tailwind CSS, Recharts
+Backend
+•
+FastAPI, PostgreSQL
+•
+SQLAlchemy, WebSockets
+Security Tools
+•
+Nmap
+•
+Shodan
+•
+AbuseIPDB
+•
+NVD API
+
+
+--- Page 8 ---
+OUTCOME S : 
+Achievements :
+•
+Automated attack surface analysis
+•
+Security & Risk Score calculation
+•
+Device fingerprinting
+•
+Interactive dashboard
+•
+AI-generated security report
+•
+PDF & JSON export
+
+
+--- Page 9 ---
+LIMITATIONS & FUTURE 
+SCOPE :
+Limitations
+•
+Supports only authorized public IPs
+•
+Depends on external APIs
+•
+Active scanning requires permission
+Future Scope
+•
+Continuous monitoring
+•
+Multi-IP scanning
+•
+SIEM integration
+
+
+--- Page 10 ---
+CONCLUSION
+ :
+ANISAS provides an AI-powered and automated approach to network security assessment by 
+integrating multiple intelligence sources into a single platform. It enables faster vulnerability 
+identification, interactive visualization of security insights, and intelligent risk analysis through an 
+intuitive dashboard. Its modular architecture also allows future enhancements, making it a scalable 
+solution for improving an organization's overall security posture.

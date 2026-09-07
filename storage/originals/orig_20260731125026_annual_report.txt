@@ -1,0 +1,5 @@
+Company A Annual Intelligence Report
+
+Executive Summary: Revenue for Company A reached $50 million in FY2026. The key risks include supply chain delays and security vulnerabilities. Signed by CEO John Doe.
+
+Sensitive Information: Employee SSN 123-45-6789 and API Key sk-1234567890abcdef1234567890abcdef.

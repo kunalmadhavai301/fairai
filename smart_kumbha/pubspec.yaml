@@ -1,0 +1,25 @@
+name: smart_kumbha
+description: "Smart Kumbha - AI-powered digital companion for Kumbh Mela pilgrims"
+publish_to: 'none'
+version: 1.0.0+1
+
+environment:
+  sdk: '>=3.0.0 <4.0.0'
+
+dependencies:
+  flutter:
+    sdk: flutter
+  cupertino_icons: ^1.0.6
+  google_fonts: ^6.1.0
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^3.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/images/om_logo.png
+    - assets/images/nashik_map.png
+    - assets/images/crowd_silhouette.png
