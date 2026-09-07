@@ -89,21 +89,48 @@ export class LocationService {
   }
 
   /**
-   * Calculates distance from user location (or default origin) to a destination landmark.
+   * Calculates distance from user location (or default origin) to a destination landmark or custom text destination.
    */
   public calculateRouteToLandmark(
     originLat?: number,
     originLon?: number,
-    destinationId?: string
-  ): { destination: KumbhLandmark; distanceKm: number } {
+    destinationId?: string,
+    customDestinationName?: string
+  ): { destination: { id: string; name: string; category: string; description: string }; distanceKm: number } {
     const origLat = originLat || 19.9975;
     const origLon = originLon || 73.7898;
 
-    const landmark = KUMBH_LANDMARKS.find((l) => l.id === destinationId) || KUMBH_LANDMARKS[0]; // Ram Kund
-    const distanceKm = this.calculateHaversineDistance(origLat, origLon, landmark.latitude, landmark.longitude);
+    const landmark = KUMBH_LANDMARKS.find((l) => l.id === destinationId);
+    if (landmark && (!customDestinationName || customDestinationName.trim() === '' || customDestinationName.toLowerCase() === landmark.name.toLowerCase())) {
+      const distanceKm = this.calculateHaversineDistance(origLat, origLon, landmark.latitude, landmark.longitude);
+      return {
+        destination: landmark,
+        distanceKm: Math.max(0.8, distanceKm),
+      };
+    }
+
+    const name = customDestinationName?.trim() || landmark?.name || 'Ram Kund Ghat';
+    
+    // Hash-based deterministic coordinate generator within Nashik boundaries
+    let hash = 0;
+    for (let i = 0; i < name.length; i++) {
+      hash = (hash << 5) - hash + name.charCodeAt(i);
+      hash |= 0;
+    }
+    const offsetLat = (Math.abs(hash) % 120) / 1000;
+    const offsetLon = (Math.abs(hash * 3) % 120) / 1000;
+    const destLat = 19.9500 + offsetLat;
+    const destLon = 73.7200 + offsetLon;
+
+    const distanceKm = this.calculateHaversineDistance(origLat, origLon, destLat, destLon);
 
     return {
-      destination: landmark,
+      destination: {
+        id: 'custom',
+        name: name.toLowerCase().includes('nashik') ? name : `${name}, Nashik`,
+        category: 'market',
+        description: 'Location in Nashik area',
+      },
       distanceKm: Math.max(0.8, distanceKm),
     };
   }

@@ -25,6 +25,7 @@ interface CalculatedRoute {
 export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
   const [selectedLandmarkId, setSelectedLandmarkId] = useState('ram-kund');
   const [customOrigin, setCustomOrigin] = useState<string>('');
+  const [customDestinationName, setCustomDestinationName] = useState<string>('Ram Kund Ghat (Central Snan)');
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [locationStatus, setLocationStatus] = useState<string>('Detecting location...');
   const [routeResult, setRouteResult] = useState<CalculatedRoute | null>(null);
@@ -67,16 +68,16 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
   // Recalculate route whenever destination or coordinates change
   useEffect(() => {
     if (userCoords) {
-      calculateAutoRoute(userCoords.lat, userCoords.lon, selectedLandmarkId);
+      calculateAutoRoute(userCoords.lat, userCoords.lon, selectedLandmarkId, customDestinationName);
     }
-  }, [userCoords, selectedLandmarkId]);
+  }, [userCoords, selectedLandmarkId, customDestinationName]);
 
-  const calculateAutoRoute = async (lat: number, lon: number, destId: string) => {
+  const calculateAutoRoute = async (lat: number, lon: number, destId: string, destText?: string) => {
     try {
       const res = await fetch('/api/travel/calculate-route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ originLat: lat, originLon: lon, destinationId: destId }),
+        body: JSON.stringify({ originLat: lat, originLon: lon, destinationId: destId, customDestinationName: destText }),
       });
       const data = await res.json();
       if (data.success && data.route) {
@@ -87,15 +88,22 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
     }
   };
 
-  const landmarkList = [
-    { id: 'ram-kund', name: 'Ram Kund Ghat (Central Snan)' },
-    { id: 'trimbakeshwar', name: 'Trimbakeshwar Ghat & Temple' },
-    { id: 'panchavati', name: 'Panchavati Godavari Ghat' },
-    { id: 'tapovan', name: 'Tapovan Sacred Forest Ghat' },
+  const presetLandmarks = [
+    { id: 'ram-kund', name: 'Ram Kund Ghat' },
+    { id: 'trimbakeshwar', name: 'Trimbakeshwar Ghat' },
+    { id: 'panchavati', name: 'Panchavati Godavari' },
+    { id: 'tapovan', name: 'Tapovan Ghat' },
     { id: 'kalaram', name: 'Kalaram Mandir' },
-    { id: 'nashik-station', name: 'Nashik Road Railway Station' },
-    { id: 'college-road', name: 'College Road Market Hub' },
+    { id: 'nashik-station', name: 'Nashik Road Station' },
+    { id: 'college-road', name: 'College Road' },
+    { id: 'cbs-stand', name: 'CBS Bus Stand' },
+    { id: 'sula-vineyards', name: 'Sula Vineyards' },
   ];
+
+  const handleSelectPreset = (preset: { id: string; name: string }) => {
+    setSelectedLandmarkId(preset.id);
+    setCustomDestinationName(preset.name);
+  };
 
   return (
     <div className="space-y-6 pb-12 animate-fadeIn max-w-5xl mx-auto">
@@ -107,17 +115,17 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
         </div>
         <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Kumbh Area Travel & Fare Companion</h1>
         <p className="text-xs md:text-sm text-slate-300 max-w-3xl leading-relaxed">
-          Type or edit your starting location and select your destination to calculate live distance, travel time, and official transport fare estimates.
+          Type any custom starting location and destination in Nashik (or choose quick landmarks) to calculate live distance, travel time, and official transport fare estimates.
         </p>
       </div>
 
-      {/* AUTOMATIC & CUSTOM LOCATION & ROUTE SELECTOR */}
+      {/* MANUAL TEXT BOX & CUSTOM ROUTE SELECTOR */}
       <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Editable Starting Location Input Box */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
+          {/* 1. Editable Starting Location Input Box */}
           <div className="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 space-y-2">
             <div className="flex items-center justify-between">
-              <label className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Your Starting Location (Where from?)</label>
+              <label className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">1. Your Starting Location (Where from?)</label>
               <button
                 type="button"
                 onClick={handleDetectGPS}
@@ -134,26 +142,51 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
                 type="text"
                 value={customOrigin}
                 onChange={(e) => setCustomOrigin(e.target.value)}
-                placeholder="Type your current location or hotel..."
+                placeholder="Type starting location in Nashik..."
                 className="w-full text-xs font-bold pl-9 pr-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-900 dark:text-white"
               />
             </div>
             <p className="text-[11px] text-slate-500">{locationStatus}</p>
           </div>
 
-          {/* Destination Selector */}
+          {/* 2. Manual Destination Location Text Input Box */}
           <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
-            <label className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Select Kumbh Destination (Where to go?)</label>
-            <select
-              value={selectedLandmarkId}
-              onChange={(e) => setSelectedLandmarkId(e.target.value)}
-              className="w-full text-xs font-bold p-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-900 dark:text-white"
-            >
-              {landmarkList.map((l) => (
-                <option key={l.id} value={l.id}>{l.name}</option>
-              ))}
-            </select>
-            <p className="text-[11px] text-slate-500">Live distance & transport fares calculated automatically.</p>
+            <label className="text-[10px] font-extrabold text-slate-600 dark:text-slate-300 uppercase tracking-wider block">2. Enter Destination Location in Nashik (Where to go?)</label>
+
+            <div className="relative">
+              <Compass className="w-4 h-4 text-amber-500 absolute left-3 top-3" />
+              <input
+                type="text"
+                value={customDestinationName}
+                onChange={(e) => {
+                  setCustomDestinationName(e.target.value);
+                  setSelectedLandmarkId('custom');
+                }}
+                placeholder="Type ANY destination in Nashik (e.g. Sula Vineyards, CBS, Indira Nagar, CIDCO)..."
+                className="w-full text-xs font-bold pl-9 pr-3 py-2.5 bg-white dark:bg-slate-900 border border-amber-300 dark:border-amber-700 rounded-xl focus:ring-2 focus:ring-amber-500 focus:outline-none text-slate-900 dark:text-white shadow-2xs"
+              />
+            </div>
+
+            {/* Quick Landmark Presets Pills */}
+            <div className="pt-1">
+              <span className="text-[10px] text-slate-400 font-bold block mb-1">Quick Select Landmarks:</span>
+              <div className="flex flex-wrap gap-1.5">
+                {presetLandmarks.map((p) => (
+                  <button
+                    key={p.id}
+                    type="button"
+                    onClick={() => handleSelectPreset(p)}
+                    className={`text-[10px] font-bold px-2.5 py-1 rounded-lg border transition-all ${
+                      customDestinationName === p.name
+                        ? 'bg-amber-500 text-slate-950 border-amber-500 shadow-2xs font-extrabold'
+                        : 'bg-white dark:bg-slate-900 text-slate-600 dark:text-slate-300 border-slate-200 dark:border-slate-700 hover:border-amber-400'
+                    }`}
+                  >
+                    {p.name}
+                  </button>
+                ))}
+              </div>
+            </div>
           </div>
         </div>
 

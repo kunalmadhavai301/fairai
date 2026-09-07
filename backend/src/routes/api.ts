@@ -204,11 +204,12 @@ router.post('/kumbh/plan-kit', (req: Request, res: Response) => {
  */
 router.post('/travel/calculate-route', (req: Request, res: Response) => {
   try {
-    const { originLat, originLon, destinationId } = req.body;
+    const { originLat, originLon, destinationId, customDestinationName } = req.body;
     const route = locationService.calculateRouteToLandmark(
       originLat ? Number(originLat) : undefined,
       originLon ? Number(originLon) : undefined,
-      destinationId
+      destinationId,
+      customDestinationName
     );
 
     const distanceKm = route.distanceKm;
