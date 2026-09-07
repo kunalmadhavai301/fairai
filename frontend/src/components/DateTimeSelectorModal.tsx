@@ -32,7 +32,7 @@ export const DateTimeSelectorModal: React.FC<DateTimeSelectorModalProps> = ({
   const fetchPrediction = async () => {
     setLoading(true);
     try {
-      const res = await fetch('http://localhost:5000/api/predictive/price-pressure', {
+      const res = await fetch('/api/predictive/price-pressure', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
@@ -69,8 +69,8 @@ export const DateTimeSelectorModal: React.FC<DateTimeSelectorModalProps> = ({
   ];
 
   return (
-    <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
-      <div className="relative w-full max-w-xl bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-amber-500/30 p-6 md:p-8 overflow-hidden space-y-6">
+    <div className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-4 bg-black/60 backdrop-blur-xs animate-fadeIn">
+      <div className="relative w-full max-w-xl max-w-[calc(100vw-1.5rem)] max-h-[90vh] overflow-y-auto bg-white dark:bg-slate-900 rounded-3xl shadow-2xl border border-amber-500/30 p-4 sm:p-6 md:p-8 space-y-6">
         {/* Modal Header */}
         <div className="flex items-center justify-between pb-4 border-b border-slate-100 dark:border-slate-800">
           <div className="flex items-center gap-2.5">
