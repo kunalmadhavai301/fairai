@@ -24,29 +24,44 @@ interface CalculatedRoute {
 
 export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
   const [selectedLandmarkId, setSelectedLandmarkId] = useState('ram-kund');
+  const [customOrigin, setCustomOrigin] = useState<string>('');
   const [userCoords, setUserCoords] = useState<{ lat: number; lon: number } | null>(null);
   const [locationStatus, setLocationStatus] = useState<string>('Detecting location...');
   const [routeResult, setRouteResult] = useState<CalculatedRoute | null>(null);
   const [productPrice, setProductPrice] = useState('500');
 
-  // Automatically request browser geolocation on load
   useEffect(() => {
+    if (location.formatted) {
+      setCustomOrigin(location.formatted);
+    }
+  }, [location]);
+
+  // Automatically request browser geolocation on load
+  const handleDetectGPS = () => {
+    setLocationStatus('Detecting GPS location...');
     if ('geolocation' in navigator) {
       navigator.geolocation.getCurrentPosition(
         (pos) => {
           setUserCoords({ lat: pos.coords.latitude, lon: pos.coords.longitude });
-          setLocationStatus('📍 Device GPS Location Detected');
+          setLocationStatus('📍 Live GPS Detected');
+          setCustomOrigin(`GPS Location (${pos.coords.latitude.toFixed(4)}, ${pos.coords.longitude.toFixed(4)})`);
         },
         (err) => {
           console.warn('Geolocation permission fallback to default city:', err);
-          setUserCoords({ lat: 19.9975, lon: 73.7898 }); // College Road, Nashik
-          setLocationStatus('📍 Location detected (Nashik, Maharashtra)');
+          setUserCoords({ lat: 19.9975, lon: 73.7898 });
+          setLocationStatus('📍 Location (College Road, Nashik)');
+          setCustomOrigin('College Road, Nashik, Maharashtra');
         }
       );
     } else {
       setUserCoords({ lat: 19.9975, lon: 73.7898 });
-      setLocationStatus('📍 Location detected (Nashik, Maharashtra)');
+      setLocationStatus('📍 Location (College Road, Nashik)');
+      setCustomOrigin('College Road, Nashik, Maharashtra');
     }
+  };
+
+  useEffect(() => {
+    handleDetectGPS();
   }, []);
 
   // Recalculate route whenever destination or coordinates change
@@ -58,7 +73,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
 
   const calculateAutoRoute = async (lat: number, lon: number, destId: string) => {
     try {
-      const res = await fetch('http://localhost:5000/api/travel/calculate-route', {
+      const res = await fetch('/api/travel/calculate-route', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ originLat: lat, originLon: lon, destinationId: destId }),
@@ -92,26 +107,43 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
         </div>
         <h1 className="text-2xl md:text-3xl font-black text-white tracking-tight">Kumbh Area Travel & Fare Companion</h1>
         <p className="text-xs md:text-sm text-slate-300 max-w-3xl leading-relaxed">
-          Zero manual kilometer input required. Your starting location is detected automatically via GPS; select your destination to view live distance, travel time, and official transport fare estimates.
+          Type or edit your starting location and select your destination to calculate live distance, travel time, and official transport fare estimates.
         </p>
       </div>
 
-      {/* AUTOMATIC LOCATION & ROUTE SELECTOR */}
+      {/* AUTOMATIC & CUSTOM LOCATION & ROUTE SELECTOR */}
       <div className="bg-white dark:bg-slate-900 p-6 rounded-3xl border border-slate-200 dark:border-slate-800 shadow-sm space-y-6">
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-          {/* Automatic Origin Box */}
-          <div className="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 space-y-1">
-            <span className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Your Starting Location</span>
-            <div className="flex items-center gap-2 font-bold text-slate-900 dark:text-white text-sm">
-              <MapPin className="w-4 h-4 text-blue-600 shrink-0 animate-bounce" />
-              <span>{location.formatted} ({location.locality || 'Detected'})</span>
+          {/* Editable Starting Location Input Box */}
+          <div className="p-4 rounded-2xl bg-blue-50/70 dark:bg-blue-950/40 border border-blue-100 dark:border-blue-900 space-y-2">
+            <div className="flex items-center justify-between">
+              <label className="text-[10px] font-extrabold text-blue-600 dark:text-blue-400 uppercase tracking-wider block">Your Starting Location (Where from?)</label>
+              <button
+                type="button"
+                onClick={handleDetectGPS}
+                className="text-[10px] font-bold text-blue-600 hover:text-blue-800 underline flex items-center gap-1"
+              >
+                <Navigation className="w-3 h-3" />
+                <span>Detect GPS</span>
+              </button>
+            </div>
+
+            <div className="relative">
+              <MapPin className="w-4 h-4 text-blue-600 absolute left-3 top-3" />
+              <input
+                type="text"
+                value={customOrigin}
+                onChange={(e) => setCustomOrigin(e.target.value)}
+                placeholder="Type your current location or hotel..."
+                className="w-full text-xs font-bold pl-9 pr-3 py-2.5 bg-white dark:bg-slate-900 border border-slate-300 dark:border-slate-700 rounded-xl focus:ring-2 focus:ring-blue-500 focus:outline-none text-slate-900 dark:text-white"
+              />
             </div>
             <p className="text-[11px] text-slate-500">{locationStatus}</p>
           </div>
 
           {/* Destination Selector */}
-          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-1.5">
-            <label className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Select Kumbh Destination</label>
+          <div className="p-4 rounded-2xl bg-slate-50 dark:bg-slate-800 border border-slate-200 dark:border-slate-700 space-y-2">
+            <label className="text-[10px] font-extrabold text-slate-500 dark:text-slate-400 uppercase tracking-wider block">Select Kumbh Destination (Where to go?)</label>
             <select
               value={selectedLandmarkId}
               onChange={(e) => setSelectedLandmarkId(e.target.value)}
@@ -121,6 +153,7 @@ export const TravelPage: React.FC<TravelPageProps> = ({ location }) => {
                 <option key={l.id} value={l.id}>{l.name}</option>
               ))}
             </select>
+            <p className="text-[11px] text-slate-500">Live distance & transport fares calculated automatically.</p>
           </div>
         </div>
 

@@ -208,9 +208,10 @@ export const TransportPage: React.FC<TransportPageProps> = ({ location }) => {
 
                   <a
                     href={`tel:${driver.phone}`}
-                    className="bg-slate-900 hover:bg-slate-800 text-white font-extrabold px-4 py-2 rounded-xl transition-colors flex items-center gap-1.5 shadow-2xs"
+                    className="bg-blue-600 hover:bg-blue-700 text-white font-black px-4 py-2.5 rounded-xl transition-all flex items-center gap-2 shadow-xs hover:scale-[1.02] active:scale-95"
+                    title="Click to call driver directly on phone dialer"
                   >
-                    <Phone className="w-3.5 h-3.5 text-blue-400" />
+                    <Phone className="w-3.5 h-3.5 text-white" />
                     <span>Call Driver</span>
                   </a>
                 </div>
