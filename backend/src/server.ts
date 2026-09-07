@@ -45,3 +45,6 @@ app.listen(PORT, () => {
   console.log(`   Tagline: "Know. Compare. Buy Smart."`);
   console.log(`====================================================`);
 });
+
+export default app;
+
