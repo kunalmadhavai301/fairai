@@ -363,6 +363,13 @@ router.get('/admin/stats', (req: Request, res: Response) => {
 });
 
 /**
+ * GET /api/admin/entries
+ */
+router.get('/admin/entries', (req: Request, res: Response) => {
+  res.json({ success: true, entries: adminService.getAddedEntries() });
+});
+
+/**
  * POST /api/admin/import
  */
 router.post('/admin/import', (req: Request, res: Response) => {

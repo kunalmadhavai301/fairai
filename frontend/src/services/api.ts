@@ -126,6 +126,11 @@ export const apiClient = {
     return res.data.stats;
   },
 
+  async getAdminEntries() {
+    const res = await axios.get(`${API_BASE}/admin/entries`);
+    return res.data.entries;
+  },
+
   async importAdminData(records: any[]) {
     const res = await axios.post(`${API_BASE}/admin/import`, { records });
     return res.data.data;
