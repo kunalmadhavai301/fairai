@@ -8,12 +8,19 @@ dist/
 backend/dist/
 frontend/dist/
 
-# Environment variables & secrets (GEMINI_API_KEY)
+# Environment variables & secrets (GEMINI_API_KEY, Google API keys, tokens)
 .env
+.env.*
+*.env
 backend/.env
 frontend/.env
 .env.local
 .env.*.local
+*.pem
+*.key
+*.p12
+credentials.json
+token.json
 
 # Logs
 *.log
